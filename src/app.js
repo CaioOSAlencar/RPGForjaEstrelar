@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import swaggerJSDoc from "swagger-jsdoc";
-import { swaggerOptions } from "./docs/config/swagger.js";
+import getSwaggerOptions from "./docs/config/swagger.js";
 import authRoutes from "./routes/authRoutes.js";
 
 const app = express();
@@ -12,8 +12,9 @@ app.use(cors());
 app.use(express.json());
 
 // Swagger
+const swaggerOptions = getSwaggerOptions();
 const swaggerSpec = swaggerJSDoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Rotas
 app.use("/auth", authRoutes);
@@ -26,7 +27,7 @@ app.get("/", (req, res) => {
       health: "/health",
       register: "POST /auth/register",
       login: "POST /auth/login",
-      docs: "/"
+      docs: "/api-docs"
     }
   });
 });
