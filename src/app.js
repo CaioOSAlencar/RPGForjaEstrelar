@@ -4,6 +4,7 @@ import swaggerUi from "swagger-ui-express";
 import swaggerJSDoc from "swagger-jsdoc";
 import getSwaggerOptions from "./docs/config/swagger.js";
 import authRoutes from "./routes/authRoutes.js";
+import campaignRoutes from "./routes/campaignRoutes.js";
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(express.json());
 
 // Rotas da API
 app.use("/auth", authRoutes);
+app.use("/campaigns", campaignRoutes);
 
 // Swagger na raiz
 const swaggerOptions = getSwaggerOptions();
