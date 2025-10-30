@@ -6,6 +6,10 @@ import authLogin from '../routes/auth/authLogin.js';
 import authUpdateProfile from '../routes/auth/authUpdateProfile.js';
 import authSchemas from '../schemas/auth/authSchemas.js';
 
+// Importar documentação de campanhas
+import campaignRoutes from '../routes/campaigns/campaignRoutes.js';
+import campaignSchemas from '../schemas/campaigns/campaignSchemas.js';
+
 const getSwaggerOptions = () => ({
   definition: {
     openapi: '3.0.0',
@@ -25,16 +29,23 @@ const getSwaggerOptions = () => ({
       { 
         name: '🔐 Autenticação', 
         description: 'RF01, RF02, RF03, RF04, RF05, RF06 - Cadastro, login, JWT, validações e edição de perfil'
+      },
+      // RF07, RF08, RF09, RF10, RF43 - Campanhas e Convites
+      { 
+        name: '🏰 Campanhas', 
+        description: 'RF07, RF08, RF09, RF10, RF43 - Criar campanhas, convites, gerenciamento de jogadores'
       }
     ],
     paths: {
       ...authRegister,
       ...authLogin,
-      ...authUpdateProfile
+      ...authUpdateProfile,
+      ...campaignRoutes
     },
     components: {
       schemas: {
-        ...authSchemas
+        ...authSchemas,
+        ...campaignSchemas
       },
       securitySchemes: {
         bearerAuth: {

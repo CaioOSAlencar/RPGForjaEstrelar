@@ -1,14 +1,12 @@
 import jwt from 'jsonwebtoken';
+import { ResponseHelper } from '../utils/responseHelper.js';
 
 export const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
 
   if (!token) {
-    return res.status(401).json({
-      success: false,
-      message: 'Token de acesso requerido'
-    });
+    return ResponseHelper.unauthorized(res, 'Token de acesso requerido');
   }
 
   try {
@@ -16,9 +14,6 @@ export const authenticateToken = (req, res, next) => {
     req.user = decoded; // { userId, email, role }
     next();
   } catch (error) {
-    return res.status(403).json({
-      success: false,
-      message: 'Token inválido ou expirado'
-    });
+    return ResponseHelper.forbidden(res, 'Token inválido ou expirado');
   }
 };
