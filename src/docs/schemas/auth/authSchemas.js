@@ -11,14 +11,14 @@ const authSchemas = {
       email: {
         type: 'string',
         format: 'email',
-        description: 'Email único do usuário',
-        example: 'joao@email.com'
+        description: 'Email único do usuário (provedor válido)',
+        example: 'joao@gmail.com'
       },
       password: {
         type: 'string',
-        minLength: 6,
-        description: 'Senha do usuário (mínimo 6 caracteres)',
-        example: '123456'
+        minLength: 8,
+        description: 'Senha do usuário (mínimo 8 caracteres, 1 maiúscula, 1 número, 1 especial)',
+        example: 'MinhaSenh@123'
       }
     }
   },
@@ -47,7 +47,7 @@ const authSchemas = {
           },
           email: {
             type: 'string',
-            example: 'joao@email.com'
+            example: 'joao@gmail.com'
           },
           role: {
             type: 'string',
