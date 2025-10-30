@@ -2,6 +2,7 @@
 
 // Importar documentação de autenticação
 import authRegister from '../routes/auth/authRegister.js';
+import authLogin from '../routes/auth/authLogin.js';
 import authSchemas from '../schemas/auth/authSchemas.js';
 
 const getSwaggerOptions = () => ({
@@ -26,7 +27,8 @@ const getSwaggerOptions = () => ({
       }
     ],
     paths: {
-      ...authRegister
+      ...authRegister,
+      ...authLogin
     },
     components: {
       schemas: {

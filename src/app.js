@@ -11,26 +11,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Swagger
+// Rotas da API
+app.use("/auth", authRoutes);
+
+// Swagger na raiz
 const swaggerOptions = getSwaggerOptions();
 const swaggerSpec = swaggerJSDoc(swaggerOptions);
 app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-// Rotas
-app.use("/auth", authRoutes);
-
-// Rota básica
-app.get("/", (req, res) => {
-  res.json({ 
-    message: "🎲 RPG Forja Estrelar - API funcionando!",
-    endpoints: {
-      health: "/health",
-      register: "POST /auth/register",
-      login: "POST /auth/login",
-      docs: "/api-docs"
-    }
-  });
-});
 
 app.get("/health", (req, res) => {
   res.json({ status: "OK", timestamp: new Date().toISOString() });

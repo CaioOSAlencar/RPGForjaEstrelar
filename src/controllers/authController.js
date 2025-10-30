@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
-import { validateRegister } from '../validadores/authValidator.js';
+import jwt from 'jsonwebtoken';
+import { validateRegister, validateLogin } from '../validadores/authValidator.js';
 import { findUserByEmail, createUser } from '../repositories/userRepository.js';
 
 export const register = async (req, res) => {
@@ -44,6 +45,66 @@ export const register = async (req, res) => {
 
   } catch (error) {
     console.error('Erro no cadastro:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
+    });
+  }
+};
+
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Validações
+    const validation = validateLogin({ email, password });
+    if (!validation.isValid) {
+      return res.status(400).json({
+        success: false,
+        message: 'Dados inválidos',
+        errors: validation.errors
+      });
+    }
+
+    // Buscar usuário por email
+    const user = await findUserByEmail(email);
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Email ou senha incorretos'
+      });
+    }
+
+    // Verificar senha
+    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Email ou senha incorretos'
+      });
+    }
+
+    // Gerar token JWT (RF03 - 7 dias)
+    const token = jwt.sign(
+      { userId: user.id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.json({
+      success: true,
+      message: 'Login realizado com sucesso!',
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
+
+  } catch (error) {
+    console.error('Erro no login:', error);
     res.status(500).json({
       success: false,
       message: 'Erro interno do servidor'
