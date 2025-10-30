@@ -7,39 +7,45 @@
 
 ---
 
-## 🚀 SPRINT 1 - AUTENTICAÇÃO E USUÁRIOS
+## ✅ SPRINT 1 - AUTENTICAÇÃO E USUÁRIOS
+**Duração:** 1-2 semanas | **Status:** ✅ Completa
+
+| ID | Descrição | Prioridade | Status | Estimativa |
+|----|-----------|------------|--------|------------|
+| RF01 | Cadastro de usuário (nome, email, senha) | Alta | ✅ Concluído | 4h |
+| RF02 | Login com email e senha | Alta | ✅ Concluído | 3h |
+| RF03 | Token JWT com expiração de 7 dias | Alta | ✅ Concluído | 2h |
+| RF04 | Validar email único no cadastro | Alta | ✅ Concluído | 1h |
+| RF06 | Atribuir papel "player" automaticamente | Alta | ✅ Concluído | 1h |
+| RF05 | Editar nome e senha do usuário | Alta | ✅ Concluído | 3h |
+
+**Entregáveis:**
+- ✅ Modelos User no Prisma
+- ✅ Controller de autenticação
+- ✅ Middleware JWT
+- ✅ Rotas de auth
+- ✅ Validações de entrada
+- ✅ Documentação Swagger completa
+
+---
+
+## 🚀 SPRINT 2 - CAMPANHAS E CONVITES
 **Duração:** 1-2 semanas | **Status:** 🔄 Em Andamento
 
 | ID | Descrição | Prioridade | Status | Estimativa |
 |----|-----------|------------|--------|------------|
-| RF01 | Cadastro de usuário (nome, email, senha) | Alta | ⏳ Pendente | 4h |
-| RF02 | Login com email e senha | Alta | ⏳ Pendente | 3h |
-| RF03 | Token JWT com expiração de 7 dias | Alta | ⏳ Pendente | 2h |
-| RF04 | Validar email único no cadastro | Alta | ⏳ Pendente | 1h |
-| RF06 | Atribuir papel "player" automaticamente | Alta | ⏳ Pendente | 1h |
-| RF05 | Editar nome e senha do usuário | Alta | ⏳ Pendente | 3h |
+| RF07 | Criar campanha (nome, sistema, descrição) | Alta | ⏳ Pendente | 4h |
+| RF08 | Convites por email ou link compartilhável | Alta | ⏳ Pendente | 6h |
+| RF09 | Aceitar convite e entrar na campanha | Alta | ⏳ Pendente | 4h |
+| RF10 | Listar campanhas do usuário | Alta | ⏳ Pendente | 3h |
+| RF43 | Mestre remover jogadores da campanha | Alta | ⏳ Pendente | 2h |
 
 **Entregáveis:**
-- ✅ Modelos User no Prisma
-- ⏳ Controller de autenticação
-- ⏳ Middleware JWT
-- ⏳ Rotas de auth
-- ⏳ Validações de entrada
-
----
-
-## 🏰 SPRINT 2 - CAMPANHAS E CONVITES
-**Duração:** 1-2 semanas | **Status:** ⏸️ Aguardando
-
-| ID | Descrição | Prioridade | Status | Estimativa |
-|----|-----------|------------|--------|------------|
-| RF07 | Criar campanha (nome, sistema, descrição) | Alta | ⏸️ Bloqueado | 4h |
-| RF08 | Convites por email ou link compartilhável | Alta | ⏸️ Bloqueado | 6h |
-| RF09 | Aceitar convite e entrar na campanha | Alta | ⏸️ Bloqueado | 4h |
-| RF10 | Listar campanhas do usuário | Alta | ⏸️ Bloqueado | 3h |
-| RF43 | Mestre remover jogadores da campanha | Alta | ⏸️ Bloqueado | 2h |
-
-**Dependências:** Sprint 1 completa
+- ⏳ Modelos Campaign, CampaignUser, CampaignInvite no Prisma
+- ⏳ Controller de campanhas
+- ⏳ Sistema de convites
+- ⏳ Validações de campanha
+- ⏳ Documentação Swagger
 
 ---
 
@@ -136,7 +142,7 @@
 ### 🔒 Segurança e Performance
 | ID | Descrição | Status |
 |----|-----------|--------|
-| RNF03 | Criptografia bcrypt + HTTPS + JWT | ⏳ Em desenvolvimento |
+| RNF03 | Criptografia bcrypt + HTTPS + JWT | ✅ Implementado |
 | RNF04 | Resposta < 2 segundos | ⏳ Monitorar |
 | RNF05 | Suporte a 10 usuários simultâneos | ⏳ Testar |
 
@@ -159,8 +165,8 @@
 ## 📈 MÉTRICAS DE PROGRESSO
 
 ### Por Sprint
-- **Sprint 1:** 0/6 (0%) - 🔄 Atual
-- **Sprint 2:** 0/5 (0%)
+- **Sprint 1:** 6/6 (100%) - ✅ Completa
+- **Sprint 2:** 0/5 (0%) - 🔄 Atual
 - **Sprint 3:** 0/7 (0%)
 - **Sprint 4:** 0/6 (0%)
 - **Sprint 5:** 0/7 (0%)
@@ -169,23 +175,21 @@
 - **Sprint 8:** 0/8 (0%)
 
 ### Geral
-- **Concluído:** 0/45 (0%)
+- **Concluído:** 6/45 (13%)
 - **Em Andamento:** 0/45 (0%)
-- **Pendente:** 45/45 (100%)
+- **Pendente:** 39/45 (87%)
 
 ---
 
 ## 🎯 PRÓXIMOS PASSOS
 
-1. **Agora:** Implementar RF01 - Cadastro de usuário
-2. **Depois:** RF02 - Login de usuário  
-3. **Em seguida:** RF03 - Token JWT
+1. **Agora:** Implementar RF07 - Criar campanha
+2. **Depois:** RF08 - Sistema de convites  
+3. **Em seguida:** RF09 - Aceitar convites
 
-**Comando para começar:**
+**Comando para continuar:**
 ```bash
-npm install
-npm run db:generate
-npm run db:push
+npm run dev
 ```
 
 ---
@@ -193,8 +197,9 @@ npm run db:push
 ## 📝 NOTAS DE DESENVOLVIMENTO
 
 - **Banco:** SQLite + Prisma configurado ✅
-- **Estrutura:** Pastas criadas ✅
-- **Dependências:** Definidas no package.json ✅
-- **Próximo:** Implementar autenticação
+- **Autenticação:** Sistema completo implementado ✅
+- **Swagger:** Documentação completa na raiz ✅
+- **Arquitetura:** Camadas bem definidas ✅
+- **Próximo:** Sistema de campanhas
 
-**Última atualização:** $(date)
+**Última atualização:** Sprint 1 completa - Iniciando Sprint 2
