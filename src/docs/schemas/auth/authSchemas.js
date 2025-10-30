@@ -1,4 +1,62 @@
 const authSchemas = {
+  LoginRequest: {
+    type: 'object',
+    required: ['email', 'password'],
+    properties: {
+      email: {
+        type: 'string',
+        format: 'email',
+        description: 'Email do usuário',
+        example: 'joao@gmail.com'
+      },
+      password: {
+        type: 'string',
+        description: 'Senha do usuário',
+        example: 'MinhaSenh@123'
+      }
+    }
+  },
+  
+  LoginResponse: {
+    type: 'object',
+    properties: {
+      success: {
+        type: 'boolean',
+        example: true
+      },
+      message: {
+        type: 'string',
+        example: 'Login realizado com sucesso!'
+      },
+      token: {
+        type: 'string',
+        description: 'Token JWT válido por 7 dias',
+        example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+      },
+      user: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'integer',
+            example: 1
+          },
+          name: {
+            type: 'string',
+            example: 'João Silva'
+          },
+          email: {
+            type: 'string',
+            example: 'joao@gmail.com'
+          },
+          role: {
+            type: 'string',
+            example: 'player'
+          }
+        }
+      }
+    }
+  },
+  
   RegisterRequest: {
     type: 'object',
     required: ['name', 'email', 'password'],

@@ -4,6 +4,26 @@ const validEmailProviders = [
   'ig.com.br', 'globo.com', 'r7.com', 'oi.com.br', 'zipmail.com.br'
 ];
 
+export const validateLogin = (data) => {
+  const errors = [];
+  const { email, password } = data;
+
+  if (!email || email.trim() === '') {
+    errors.push('Email é obrigatório');
+  } else if (!/\S+@\S+\.\S+/.test(email)) {
+    errors.push('Email deve ter formato válido');
+  }
+
+  if (!password || password.trim() === '') {
+    errors.push('Senha é obrigatória');
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
+};
+
 export const validateRegister = (data) => {
   const errors = [];
   const { name, email, password } = data;
