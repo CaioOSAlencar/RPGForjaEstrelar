@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { validateRegister, validateLogin } from '../validadores/authValidator.js';
-import { findUserByEmail, createUser } from '../repositories/userRepository.js';
+import { validateRegister, validateLogin, validateUpdateProfile } from '../validadores/authValidator.js';
+import { findUserByEmail, findUserById, createUser, updateUser } from '../repositories/userRepository.js';
 
 export const register = async (req, res) => {
   try {
@@ -105,6 +105,58 @@ export const login = async (req, res) => {
 
   } catch (error) {
     console.error('Erro no login:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
+    });
+  }
+};
+
+export const updateProfile = async (req, res) => {
+  try {
+    const { name, password } = req.body;
+    const userId = req.user.userId;
+
+    // Validações
+    const validation = validateUpdateProfile({ name, password });
+    if (!validation.isValid) {
+      return res.status(400).json({
+        success: false,
+        message: 'Dados inválidos',
+        errors: validation.errors
+      });
+    }
+
+    // Verificar se pelo menos um campo foi enviado
+    if (!name && !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Pelo menos um campo (nome ou senha) deve ser informado'
+      });
+    }
+
+    // Preparar dados para atualização
+    const updateData = {};
+    
+    if (name) {
+      updateData.name = name.trim();
+    }
+    
+    if (password) {
+      updateData.passwordHash = await bcrypt.hash(password, 12);
+    }
+
+    // Atualizar usuário
+    const updatedUser = await updateUser(userId, updateData);
+
+    res.json({
+      success: true,
+      message: 'Perfil atualizado com sucesso!',
+      user: updatedUser
+    });
+
+  } catch (error) {
+    console.error('Erro ao atualizar perfil:', error);
     res.status(500).json({
       success: false,
       message: 'Erro interno do servidor'

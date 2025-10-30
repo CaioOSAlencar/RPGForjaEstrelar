@@ -120,6 +120,62 @@ const authSchemas = {
     }
   },
   
+  UpdateProfileRequest: {
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string',
+        description: 'Novo nome do usuário (opcional)',
+        example: 'João Silva Santos'
+      },
+      password: {
+        type: 'string',
+        minLength: 8,
+        description: 'Nova senha do usuário (opcional)',
+        example: 'NovaSenha@456'
+      }
+    }
+  },
+  
+  UpdateProfileResponse: {
+    type: 'object',
+    properties: {
+      success: {
+        type: 'boolean',
+        example: true
+      },
+      message: {
+        type: 'string',
+        example: 'Perfil atualizado com sucesso!'
+      },
+      user: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'integer',
+            example: 1
+          },
+          name: {
+            type: 'string',
+            example: 'João Silva Santos'
+          },
+          email: {
+            type: 'string',
+            example: 'joao@gmail.com'
+          },
+          role: {
+            type: 'string',
+            example: 'player'
+          },
+          updatedAt: {
+            type: 'string',
+            format: 'date-time'
+          }
+        }
+      }
+    }
+  },
+  
   ErrorResponse: {
     type: 'object',
     properties: {
