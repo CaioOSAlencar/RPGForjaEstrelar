@@ -70,3 +70,42 @@ export const validateRegister = (data) => {
     errors
   };
 };
+
+export const validateUpdateProfile = (data) => {
+  const errors = [];
+  const { name, password } = data;
+
+  // Validação do nome (opcional)
+  if (name !== undefined) {
+    if (!name || name.trim() === '') {
+      errors.push('Nome não pode ser vazio');
+    } else if (name.trim().length < 2) {
+      errors.push('Nome deve ter pelo menos 2 caracteres');
+    }
+  }
+
+  // Validação da senha (opcional)
+  if (password !== undefined) {
+    if (!password) {
+      errors.push('Senha não pode ser vazia');
+    } else {
+      if (password.length < 8) {
+        errors.push('Senha deve ter pelo menos 8 caracteres');
+      }
+      if (!/[A-Z]/.test(password)) {
+        errors.push('Senha deve conter pelo menos 1 letra maiúscula');
+      }
+      if (!/[0-9]/.test(password)) {
+        errors.push('Senha deve conter pelo menos 1 número');
+      }
+      if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+        errors.push('Senha deve conter pelo menos 1 caractere especial (!@#$%^&*)');
+      }
+    }
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
+};
