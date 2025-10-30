@@ -26,3 +26,35 @@ export const validateCreateCampaign = (data) => {
     errors
   };
 };
+
+export const validateInviteByEmail = (data) => {
+  const errors = [];
+  const { email } = data;
+
+  if (!email || email.trim() === '') {
+    errors.push('Email é obrigatório');
+  } else if (!/\S+@\S+\.\S+/.test(email)) {
+    errors.push('Email deve ter formato válido');
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
+};
+
+export const validateJoinByCode = (data) => {
+  const errors = [];
+  const { roomCode } = data;
+
+  if (!roomCode || roomCode.trim() === '') {
+    errors.push('Código da sala é obrigatório');
+  } else if (roomCode.trim().length !== 6) {
+    errors.push('Código da sala deve ter 6 caracteres');
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
+};

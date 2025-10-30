@@ -29,40 +29,48 @@
 
 ---
 
-## 🚀 SPRINT 2 - CAMPANHAS E CONVITES
-**Duração:** 1-2 semanas | **Status:** 🔄 Em Andamento
+## ✅ SPRINT 2 - CAMPANHAS E CONVITES
+**Duração:** 1-2 semanas | **Status:** ✅ Completa
 
 | ID | Descrição | Prioridade | Status | Estimativa |
 |----|-----------|------------|--------|------------|
-| RF07 | Criar campanha (nome, sistema, descrição) | Alta | ⏳ Pendente | 4h |
-| RF08 | Convites por email ou link compartilhável | Alta | ⏳ Pendente | 6h |
-| RF09 | Aceitar convite e entrar na campanha | Alta | ⏳ Pendente | 4h |
-| RF10 | Listar campanhas do usuário | Alta | ⏳ Pendente | 3h |
-| RF43 | Mestre remover jogadores da campanha | Alta | ⏳ Pendente | 2h |
+| RF07 | Criar campanha (nome, sistema, descrição) | Alta | ✅ Concluído | 4h |
+| RF08 | Convites por email ou link compartilhável | Alta | ✅ Concluído | 6h |
+| RF09 | Aceitar convite e entrar na campanha | Alta | ✅ Concluído | 4h |
+| RF10 | Listar campanhas do usuário | Alta | ✅ Concluído | 3h |
+| RF43 | Mestre remover jogadores da campanha | Alta | ✅ Concluído | 2h |
 
 **Entregáveis:**
-- ⏳ Modelos Campaign, CampaignUser, CampaignInvite no Prisma
-- ⏳ Controller de campanhas
-- ⏳ Sistema de convites
-- ⏳ Validações de campanha
-- ⏳ Documentação Swagger
+- ✅ Modelos Campaign, CampaignUser, CampaignInvite no Prisma
+- ✅ Controller de campanhas
+- ✅ Sistema de convites completo
+- ✅ Validações de campanha
+- ✅ Documentação Swagger completa
+- ✅ Gerenciamento de jogadores
 
 ---
 
-## 🗺️ SPRINT 3 - MAPAS E CENAS BÁSICAS
-**Duração:** 2 semanas | **Status:** ⏸️ Aguardando
+## 🚀 SPRINT 3 - MAPAS E CENAS BÁSICAS
+**Duração:** 2 semanas | **Status:** 🔄 Em Andamento
 
 | ID | Descrição | Prioridade | Status | Estimativa |
 |----|-----------|------------|--------|------------|
-| RF11 | Criar cena com upload de imagem de fundo | Alta | ⏸️ Bloqueado | 6h |
-| RF12 | Configurar grid (tamanho, cor, snap) | Alta | ⏸️ Bloqueado | 4h |
-| RF13 | Upload de tokens (PNG/JPG) com nome e HP | Alta | ⏸️ Bloqueado | 5h |
-| RF14 | Arrastar tokens em tempo real (WebSocket) | Alta | ⏸️ Bloqueado | 8h |
-| RF15 | Rotacionar e redimensionar tokens | Alta | ⏸️ Bloqueado | 4h |
-| RF34 | Salvar posição dos tokens em tempo real | Alta | ⏸️ Bloqueado | 3h |
-| RF45 | Mestre deletar cenas e tokens | Alta | ⏸️ Bloqueado | 2h |
+| RF11 | Criar cena com upload de imagem de fundo | Alta | ⏳ Pendente | 6h |
+| RF12 | Configurar grid (tamanho, cor, snap) | Alta | ⏳ Pendente | 4h |
+| RF13 | Upload de tokens (PNG/JPG) com nome e HP | Alta | ⏳ Pendente | 5h |
+| RF14 | Arrastar tokens em tempo real (WebSocket) | Alta | ⏳ Pendente | 8h |
+| RF15 | Rotacionar e redimensionar tokens | Alta | ⏳ Pendente | 4h |
+| RF34 | Salvar posição dos tokens em tempo real | Alta | ⏳ Pendente | 3h |
+| RF45 | Mestre deletar cenas e tokens | Alta | ⏳ Pendente | 2h |
 
-**Dependências:** Sprint 2 completa
+**Entregáveis:**
+- ⏳ Modelos Scene, Token no Prisma
+- ⏳ Controller de cenas e tokens
+- ⏳ Sistema de upload de imagens
+- ⏳ WebSocket para tempo real
+- ⏳ Documentação Swagger
+
+**Dependências:** Sprint 2 completa ✅
 
 ---
 
@@ -166,8 +174,8 @@
 
 ### Por Sprint
 - **Sprint 1:** 6/6 (100%) - ✅ Completa
-- **Sprint 2:** 0/5 (0%) - 🔄 Atual
-- **Sprint 3:** 0/7 (0%)
+- **Sprint 2:** 5/5 (100%) - ✅ Completa
+- **Sprint 3:** 0/7 (0%) - 🔄 Atual
 - **Sprint 4:** 0/6 (0%)
 - **Sprint 5:** 0/7 (0%)
 - **Sprint 6:** 0/4 (0%)
@@ -175,17 +183,17 @@
 - **Sprint 8:** 0/8 (0%)
 
 ### Geral
-- **Concluído:** 6/45 (13%)
+- **Concluído:** 11/45 (24%)
 - **Em Andamento:** 0/45 (0%)
-- **Pendente:** 39/45 (87%)
+- **Pendente:** 34/45 (76%)
 
 ---
 
 ## 🎯 PRÓXIMOS PASSOS
 
-1. **Agora:** Implementar RF07 - Criar campanha
-2. **Depois:** RF08 - Sistema de convites  
-3. **Em seguida:** RF09 - Aceitar convites
+1. **Agora:** Implementar RF11 - Criar cenas com mapas
+2. **Depois:** RF12 - Sistema de grid configurável
+3. **Em seguida:** RF13 - Upload e gerenciamento de tokens
 
 **Comando para continuar:**
 ```bash
@@ -198,8 +206,29 @@ npm run dev
 
 - **Banco:** SQLite + Prisma configurado ✅
 - **Autenticação:** Sistema completo implementado ✅
+- **Campanhas:** Sistema completo com convites ✅
 - **Swagger:** Documentação completa na raiz ✅
 - **Arquitetura:** Camadas bem definidas ✅
-- **Próximo:** Sistema de campanhas
+- **Utils:** Helpers padronizados ✅
+- **Próximo:** Sistema de mapas e tokens
 
-**Última atualização:** Sprint 1 completa - Iniciando Sprint 2
+**Última atualização:** Sprint 2 completa - Iniciando Sprint 3
+
+---
+
+## 🏆 CONQUISTAS RECENTES
+
+### Sprint 2 - Campanhas (100% Completa)
+- ✅ **RF07** - Criar campanhas com códigos únicos
+- ✅ **RF08** - Sistema de convites por email e link
+- ✅ **RF09** - Aceitar convites com validações
+- ✅ **RF10** - Listar campanhas do usuário
+- ✅ **RF43** - Remover jogadores (apenas mestre)
+
+### Funcionalidades Implementadas
+- 🔐 **Autenticação JWT** completa
+- 🏰 **Gerenciamento de campanhas** robusto
+- 📧 **Sistema de convites** por email/link
+- 👥 **Controle de jogadores** pelo mestre
+- 📚 **Documentação Swagger** 100% atualizada
+- 🛠️ **Arquitetura limpa** com utils padronizados
