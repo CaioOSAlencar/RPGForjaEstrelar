@@ -10,6 +10,16 @@ import authSchemas from '../schemas/auth/authSchemas.js';
 import campaignRoutes from '../routes/campaigns/campaignRoutes.js';
 import campaignSchemas from '../schemas/campaigns/campaignSchemas.js';
 
+// Importar documentação de cenas
+import sceneRoutes from '../routes/scenes/sceneRoutes.js';
+import sceneSchemas from '../schemas/scenes/sceneSchemas.js';
+
+// Importar documentação de tokens
+import tokenRoutes from '../routes/tokens/tokenRoutes.js';
+import tokenSchemas from '../schemas/tokens/tokenSchemas.js';
+
+
+
 const getSwaggerOptions = () => ({
   definition: {
     openapi: '3.0.0',
@@ -34,18 +44,32 @@ const getSwaggerOptions = () => ({
       { 
         name: '🏰 Campanhas', 
         description: 'RF07, RF08, RF09, RF10, RF43 - Criar campanhas, convites, gerenciamento de jogadores'
+      },
+      // RF11, RF12, RF45 - Cenas e Mapas
+      { 
+        name: '🗺️ Cenas', 
+        description: 'RF11, RF12, RF45 - Criar cenas, upload de mapas, configurações de grid'
+      },
+      // RF13, RF14, RF15 - Tokens e Tempo Real
+      { 
+        name: '🎭 Tokens', 
+        description: 'RF13, RF14, RF15 - Upload, gerenciamento, movimentação, rotação e redimensionamento de tokens'
       }
     ],
     paths: {
       ...authRegister,
       ...authLogin,
       ...authUpdateProfile,
-      ...campaignRoutes
+      ...campaignRoutes,
+      ...sceneRoutes,
+      ...tokenRoutes
     },
     components: {
       schemas: {
         ...authSchemas,
-        ...campaignSchemas
+        ...campaignSchemas,
+        ...sceneSchemas,
+        ...tokenSchemas
       },
       securitySchemes: {
         bearerAuth: {
