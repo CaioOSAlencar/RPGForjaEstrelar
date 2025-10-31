@@ -18,8 +18,7 @@ import sceneSchemas from '../schemas/scenes/sceneSchemas.js';
 import tokenRoutes from '../routes/tokens/tokenRoutes.js';
 import tokenSchemas from '../schemas/tokens/tokenSchemas.js';
 
-// Importar documentação de tempo real
-import realtimeRoutes from '../routes/realtime/realtimeRoutes.js';
+
 
 const getSwaggerOptions = () => ({
   definition: {
@@ -51,15 +50,10 @@ const getSwaggerOptions = () => ({
         name: '🗺️ Cenas', 
         description: 'RF11, RF12, RF45 - Criar cenas, upload de mapas, configurações de grid'
       },
-      // RF13 - Tokens
+      // RF13, RF14, RF15 - Tokens e Tempo Real
       { 
         name: '🎭 Tokens', 
-        description: 'RF13 - Upload e gerenciamento de tokens com imagens, HP e posicionamento'
-      },
-      // RF14 - Tempo Real
-      { 
-        name: '⚡ Tempo Real', 
-        description: 'RF14 - Movimentação de tokens em tempo real com WebSocket'
+        description: 'RF13, RF14, RF15 - Upload, gerenciamento, movimentação, rotação e redimensionamento de tokens'
       }
     ],
     paths: {
@@ -68,8 +62,7 @@ const getSwaggerOptions = () => ({
       ...authUpdateProfile,
       ...campaignRoutes,
       ...sceneRoutes,
-      ...tokenRoutes,
-      ...realtimeRoutes
+      ...tokenRoutes
     },
     components: {
       schemas: {

@@ -42,6 +42,8 @@ class SocketManager {
 
     socket.on('join-scene', this.handleJoinScene.bind(this, socket));
     socket.on('move-token', this.handleMoveToken.bind(this, socket));
+    socket.on('rotate-token', this.handleRotateToken.bind(this, socket));
+    socket.on('resize-token', this.handleResizeToken.bind(this, socket));
     socket.on('disconnect', this.handleDisconnect.bind(this, socket));
   }
 
@@ -52,20 +54,40 @@ class SocketManager {
 
   async handleMoveToken(socket, { tokenId, x, y, sceneId }) {
     try {
-      // Atualizar posição no banco
       const updatedToken = await tokenRepository.updateToken(tokenId, { x, y });
-      
       if (updatedToken) {
-        // Broadcast para todos na cena
         socket.to(`scene-${sceneId}`).emit('token-moved', {
-          tokenId,
-          x,
-          y,
-          movedBy: socket.userId
+          tokenId, x, y, movedBy: socket.userId
         });
       }
     } catch (error) {
       socket.emit('error', { message: 'Erro ao mover token' });
+    }
+  }
+
+  async handleRotateToken(socket, { tokenId, rotation, sceneId }) {
+    try {
+      const updatedToken = await tokenRepository.updateToken(tokenId, { rotation });
+      if (updatedToken) {
+        socket.to(`scene-${sceneId}`).emit('token-rotated', {
+          tokenId, rotation, rotatedBy: socket.userId
+        });
+      }
+    } catch (error) {
+      socket.emit('error', { message: 'Erro ao rotacionar token' });
+    }
+  }
+
+  async handleResizeToken(socket, { tokenId, size, sceneId }) {
+    try {
+      const updatedToken = await tokenRepository.updateToken(tokenId, { size });
+      if (updatedToken) {
+        socket.to(`scene-${sceneId}`).emit('token-resized', {
+          tokenId, size, resizedBy: socket.userId
+        });
+      }
+    } catch (error) {
+      socket.emit('error', { message: 'Erro ao redimensionar token' });
     }
   }
 

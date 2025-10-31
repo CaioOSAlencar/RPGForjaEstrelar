@@ -51,24 +51,24 @@
 ---
 
 ## 🚀 SPRINT 3 - MAPAS E CENAS BÁSICAS
-**Duração:** 2 semanas | **Status:** 🔄 Em Andamento
+**Duração:** 2 semanas | **Status:** ✅ Completa
 
 | ID | Descrição | Prioridade | Status | Estimativa |
 |----|-----------|------------|--------|------------|
-| RF11 | Criar cena com upload de imagem de fundo | Alta | ⏳ Pendente | 6h |
-| RF12 | Configurar grid (tamanho, cor, snap) | Alta | ⏳ Pendente | 4h |
-| RF13 | Upload de tokens (PNG/JPG) com nome e HP | Alta | ⏳ Pendente | 5h |
-| RF14 | Arrastar tokens em tempo real (WebSocket) | Alta | ⏳ Pendente | 8h |
-| RF15 | Rotacionar e redimensionar tokens | Alta | ⏳ Pendente | 4h |
-| RF34 | Salvar posição dos tokens em tempo real | Alta | ⏳ Pendente | 3h |
-| RF45 | Mestre deletar cenas e tokens | Alta | ⏳ Pendente | 2h |
+| RF11 | Criar cena com upload de imagem de fundo | Alta | ✅ Concluído | 6h |
+| RF12 | Configurar grid (tamanho, cor, snap) | Alta | ✅ Concluído | 4h |
+| RF13 | Upload de tokens (PNG/JPG) com nome e HP | Alta | ✅ Concluído | 5h |
+| RF14 | Arrastar tokens em tempo real (WebSocket) | Alta | ✅ Concluído | 8h |
+| RF15 | Rotacionar e redimensionar tokens | Alta | ✅ Concluído | 4h |
+| RF34 | Salvar posição dos tokens em tempo real | Alta | ✅ Concluído | 3h |
+| RF45 | Mestre deletar cenas e tokens | Alta | ✅ Concluído | 2h |
 
 **Entregáveis:**
-- ⏳ Modelos Scene, Token no Prisma
-- ⏳ Controller de cenas e tokens
-- ⏳ Sistema de upload de imagens
-- ⏳ WebSocket para tempo real
-- ⏳ Documentação Swagger
+- ✅ Modelos Scene, Token no Prisma
+- ✅ Controller de cenas e tokens
+- ✅ Sistema de upload de imagens
+- ✅ WebSocket para tempo real
+- ✅ Documentação Swagger completa
 
 **Dependências:** Sprint 2 completa ✅
 
@@ -159,7 +159,7 @@
 |----|-----------|--------|
 | RNF01 | Self-hosted sem internet | ✅ Arquitetura definida |
 | RNF02 | SQLite como banco | ✅ Implementado |
-| RNF07 | WebSocket (Socket.io) | ⏳ Pendente |
+| RNF07 | WebSocket (Socket.io) | ✅ Implementado |
 | RNF12 | Node.js + Express + React + Vite + Tailwind | ⏳ Pendente |
 
 ### 📱 Compatibilidade
@@ -175,7 +175,7 @@
 ### Por Sprint
 - **Sprint 1:** 6/6 (100%) - ✅ Completa
 - **Sprint 2:** 5/5 (100%) - ✅ Completa
-- **Sprint 3:** 0/7 (0%) - 🔄 Atual
+- **Sprint 3:** 7/7 (100%) - ✅ Completa
 - **Sprint 4:** 0/6 (0%)
 - **Sprint 5:** 0/7 (0%)
 - **Sprint 6:** 0/4 (0%)
@@ -183,17 +183,17 @@
 - **Sprint 8:** 0/8 (0%)
 
 ### Geral
-- **Concluído:** 11/45 (24%)
+- **Concluído:** 18/45 (40%)
 - **Em Andamento:** 0/45 (0%)
-- **Pendente:** 34/45 (76%)
+- **Pendente:** 27/45 (60%)
 
 ---
 
 ## 🎯 PRÓXIMOS PASSOS
 
-1. **Agora:** Implementar RF11 - Criar cenas com mapas
-2. **Depois:** RF12 - Sistema de grid configurável
-3. **Em seguida:** RF13 - Upload e gerenciamento de tokens
+1. **Agora:** Iniciar Sprint 4 - Chat e Sistema de Dados
+2. **Depois:** RF23 - Chat em tempo real
+3. **Em seguida:** RF20 - Rolagem de dados
 
 **Comando para continuar:**
 ```bash
@@ -212,23 +212,29 @@ npm run dev
 - **Utils:** Helpers padronizados ✅
 - **Próximo:** Sistema de mapas e tokens
 
-**Última atualização:** Sprint 2 completa - Iniciando Sprint 3
+**Última atualização:** Sprint 3 completa - Iniciando Sprint 4
 
 ---
 
 ## 🏆 CONQUISTAS RECENTES
 
-### Sprint 2 - Campanhas (100% Completa)
-- ✅ **RF07** - Criar campanhas com códigos únicos
-- ✅ **RF08** - Sistema de convites por email e link
-- ✅ **RF09** - Aceitar convites com validações
-- ✅ **RF10** - Listar campanhas do usuário
-- ✅ **RF43** - Remover jogadores (apenas mestre)
+### Sprint 3 - Mapas e Cenas Básicas (100% Completa)
+- ✅ **RF11** - Criar cenas com upload de imagem de fundo
+- ✅ **RF12** - Configurar grid (tamanho, cor, snap)
+- ✅ **RF13** - Upload de tokens com imagens, nome, HP e posicionamento
+- ✅ **RF14** - Movimentação de tokens em tempo real via WebSocket
+- ✅ **RF15** - Rotação e redimensionamento de tokens
+- ✅ **RF34** - Salvamento automático de posições em tempo real
+- ✅ **RF45** - Mestre deletar cenas e tokens
 
 ### Funcionalidades Implementadas
 - 🔐 **Autenticação JWT** completa
 - 🏰 **Gerenciamento de campanhas** robusto
 - 📧 **Sistema de convites** por email/link
 - 👥 **Controle de jogadores** pelo mestre
+- 🗺️ **Sistema completo de cenas** com upload de mapas e grid configurável
+- 🎭 **Sistema completo de tokens** com upload, CRUD e tempo real
+- ⚡ **WebSocket (Socket.io)** para sincronização em tempo real
+- 🗑️ **Sistema de deleção** para cenas e tokens
 - 📚 **Documentação Swagger** 100% atualizada
 - 🛠️ **Arquitetura limpa** com utils padronizados

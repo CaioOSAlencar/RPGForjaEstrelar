@@ -7,30 +7,28 @@ import {
   deleteScene
 } from '../repositories/sceneRepository.js';
 import { findCampaignById } from '../repositories/campaignRepository.js';
-import { ResponseHelper } from '../utils/responseHelper.js';
-import { asyncHandler } from '../utils/asyncHandler.js';
-import { ApiError } from '../utils/ApiError.js';
-import path from 'path';
+import { sendResponse, sendError } from '../utils/messages.js';
+import asyncHandler from 'express-async-handler';
 
 // RF11 - Criar cena com upload de imagem
 export const createNewScene = asyncHandler(async (req, res) => {
   const { name, campaignId } = req.body;
-  const userId = req.user.userId;
+  const userId = req.user.id;
 
   // Validações
   const validation = validateCreateScene({ name, campaignId });
   if (!validation.isValid) {
-    throw ApiError.badRequest('Dados inválidos', validation.errors.map(err => ({ message: err })));
+    return sendError(res, 400, validation.errors);
   }
 
   // Verificar se campanha existe e se usuário é o mestre
   const campaign = await findCampaignById(parseInt(campaignId));
   if (!campaign) {
-    throw ApiError.notFound('Campanha não encontrada');
+    return sendError(res, 404, 'Campanha não encontrada');
   }
 
   if (campaign.masterId !== userId) {
-    throw ApiError.forbidden('Apenas o mestre pode criar cenas');
+    return sendError(res, 403, 'Apenas o mestre pode criar cenas');
   }
 
   // Preparar dados da cena
@@ -50,72 +48,72 @@ export const createNewScene = asyncHandler(async (req, res) => {
   // Criar cena
   const scene = await createScene(sceneData);
 
-  return ResponseHelper.created(res, scene, 'Cena criada com sucesso!');
+  return sendResponse(res, 201, { data: scene, message: 'Cena criada com sucesso!' });
 });
 
 // Listar cenas da campanha
 export const listCampaignScenes = asyncHandler(async (req, res) => {
   const { campaignId } = req.params;
-  const userId = req.user.userId;
+  const userId = req.user.id;
 
   // Verificar se campanha existe e se usuário participa
   const campaign = await findCampaignById(parseInt(campaignId));
   if (!campaign) {
-    throw ApiError.notFound('Campanha não encontrada');
+    return sendError(res, 404, 'Campanha não encontrada');
   }
 
   // TODO: Verificar se usuário participa da campanha (mestre ou jogador)
   // Por enquanto, apenas mestre pode ver cenas
   if (campaign.masterId !== userId) {
-    throw ApiError.forbidden('Apenas participantes da campanha podem ver as cenas');
+    return sendError(res, 403, 'Apenas participantes da campanha podem ver as cenas');
   }
 
   // Buscar cenas da campanha
   const scenes = await findScenesByCampaign(parseInt(campaignId));
 
-  return ResponseHelper.success(res, scenes, 'Cenas listadas com sucesso');
+  return sendResponse(res, 200, { data: scenes, message: 'Cenas listadas com sucesso' });
 });
 
 // Obter detalhes de uma cena
 export const getSceneDetails = asyncHandler(async (req, res) => {
   const { sceneId } = req.params;
-  const userId = req.user.userId;
+  const userId = req.user.id;
 
   // Buscar cena
   const scene = await findSceneById(parseInt(sceneId));
   if (!scene) {
-    throw ApiError.notFound('Cena não encontrada');
+    return sendError(res, 404, 'Cena não encontrada');
   }
 
   // Verificar se usuário pode acessar (mestre da campanha)
   if (scene.campaign.masterId !== userId) {
-    throw ApiError.forbidden('Apenas o mestre pode acessar os detalhes da cena');
+    return sendError(res, 403, 'Apenas o mestre pode acessar os detalhes da cena');
   }
 
-  return ResponseHelper.success(res, scene, 'Detalhes da cena obtidos com sucesso');
+  return sendResponse(res, 200, { data: scene, message: 'Detalhes da cena obtidos com sucesso' });
 });
 
 // RF12 - Atualizar configurações da cena (grid, etc)
 export const updateSceneSettings = asyncHandler(async (req, res) => {
   const { sceneId } = req.params;
   const { name, gridSize, gridColor, snapToGrid } = req.body;
-  const userId = req.user.userId;
+  const userId = req.user.id;
 
   // Validações
   const validation = validateUpdateScene({ name, gridSize, gridColor, snapToGrid });
   if (!validation.isValid) {
-    throw ApiError.badRequest('Dados inválidos', validation.errors.map(err => ({ message: err })));
+    return sendError(res, 400, validation.errors);
   }
 
   // Buscar cena
   const scene = await findSceneById(parseInt(sceneId));
   if (!scene) {
-    throw ApiError.notFound('Cena não encontrada');
+    return sendError(res, 404, 'Cena não encontrada');
   }
 
   // Verificar se usuário é o mestre
   if (scene.campaign.masterId !== userId) {
-    throw ApiError.forbidden('Apenas o mestre pode editar a cena');
+    return sendError(res, 403, 'Apenas o mestre pode editar a cena');
   }
 
   // Preparar dados para atualização
@@ -129,32 +127,27 @@ export const updateSceneSettings = asyncHandler(async (req, res) => {
   // Atualizar cena
   const updatedScene = await updateScene(parseInt(sceneId), updateData);
 
-  return ResponseHelper.success(res, updatedScene, 'Cena atualizada com sucesso!');
+  return sendResponse(res, 200, { data: updatedScene, message: 'Cena atualizada com sucesso!' });
 });
 
 // RF45 - Deletar cena
 export const deleteSceneById = asyncHandler(async (req, res) => {
   const { sceneId } = req.params;
-  const userId = req.user.userId;
+  const userId = req.user.id;
 
   // Buscar cena
   const scene = await findSceneById(parseInt(sceneId));
   if (!scene) {
-    throw ApiError.notFound('Cena não encontrada');
+    return sendError(res, 404, 'Cena não encontrada');
   }
 
   // Verificar se usuário é o mestre
   if (scene.campaign.masterId !== userId) {
-    throw ApiError.forbidden('Apenas o mestre pode deletar a cena');
-  }
-
-  // Deletar arquivo de imagem se existir
-  if (scene.backgroundUrl) {
-    // TODO: Implementar deleção do arquivo físico
+    return sendError(res, 403, 'Apenas o mestre pode deletar a cena');
   }
 
   // Deletar cena
   await deleteScene(parseInt(sceneId));
 
-  return ResponseHelper.success(res, null, 'Cena deletada com sucesso');
+  return sendResponse(res, 200, { data: null, message: 'Cena deletada com sucesso' });
 });

@@ -2,7 +2,7 @@ export default {
   '/api/realtime/tokens/{tokenId}/move': {
     put: {
       summary: 'Mover token em tempo real',
-      tags: ['Tempo Real'],
+      tags: ['Tokens'],
       security: [{ bearerAuth: [] }],
       parameters: [{
         in: 'path',
