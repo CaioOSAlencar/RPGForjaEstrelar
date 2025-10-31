@@ -8,6 +8,10 @@ import campaignRoutes from "./routes/campaignRoutes.js";
 import sceneRoutes from "./routes/sceneRoutes.js";
 import tokenRoutes from "./routes/tokenRoutes.js";
 import realtimeRoutes from "./routes/realtimeRoutes.js";
+import chatRoutes from "./routes/chatRoutes.js";
+import diceRoutes from "./routes/diceRoutes.js";
+import distanceRoutes from "./routes/distanceRoutes.js";
+import distanceRoutes from "./routes/distanceRoutes.js";
 
 const app = express();
 
@@ -16,11 +20,15 @@ app.use(cors());
 app.use(express.json());
 
 // Rotas da API
-app.use("/auth", authRoutes);
-app.use("/campaigns", campaignRoutes);
-app.use("/scenes", sceneRoutes);
-app.use("/tokens", tokenRoutes);
-app.use("/realtime", realtimeRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/campaigns", campaignRoutes);
+app.use("/api/scenes", sceneRoutes);
+app.use("/api/tokens", tokenRoutes);
+app.use("/api/realtime", realtimeRoutes);
+app.use("/api/chat", chatRoutes);
+app.use("/api/dice", diceRoutes);
+app.use("/api/distance", distanceRoutes);
+app.use("/api/distance", distanceRoutes);
 
 // Swagger na raiz
 const swaggerOptions = getSwaggerOptions();

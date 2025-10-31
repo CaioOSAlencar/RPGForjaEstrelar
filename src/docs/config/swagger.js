@@ -18,6 +18,10 @@ import sceneSchemas from '../schemas/scenes/sceneSchemas.js';
 import tokenRoutes from '../routes/tokens/tokenRoutes.js';
 import tokenSchemas from '../schemas/tokens/tokenSchemas.js';
 
+// Importar documentação de chat
+import chatRoutes from '../routes/chat/chatRoutes.js';
+import chatSchemas from '../schemas/chat/chatSchemas.js';
+
 
 
 const getSwaggerOptions = () => ({
@@ -54,6 +58,11 @@ const getSwaggerOptions = () => ({
       { 
         name: '🎭 Tokens', 
         description: 'RF13, RF14, RF15 - Upload, gerenciamento, movimentação, rotação e redimensionamento de tokens'
+      },
+      // RF23, RF20 - Chat e Dados
+      { 
+        name: '💬 Chat', 
+        description: 'RF23, RF20 - Chat em tempo real com timestamp, nome do usuário e rolagem de dados'
       }
     ],
     paths: {
@@ -62,14 +71,16 @@ const getSwaggerOptions = () => ({
       ...authUpdateProfile,
       ...campaignRoutes,
       ...sceneRoutes,
-      ...tokenRoutes
+      ...tokenRoutes,
+      ...chatRoutes
     },
     components: {
       schemas: {
         ...authSchemas,
         ...campaignSchemas,
         ...sceneSchemas,
-        ...tokenSchemas
+        ...tokenSchemas,
+        ...chatSchemas
       },
       securitySchemes: {
         bearerAuth: {

@@ -75,16 +75,16 @@
 ---
 
 ## 💬 SPRINT 4 - CHAT E SISTEMA DE DADOS
-**Duração:** 1-2 semanas | **Status:** ⏸️ Aguardando
+**Duração:** 1-2 semanas | **Status:** ✅ Completa
 
 | ID | Descrição | Prioridade | Status | Estimativa |
 |----|-----------|------------|--------|------------|
-| RF23 | Chat em tempo real com timestamp | Alta | ⏸️ Bloqueado | 6h |
-| RF20 | Rolagem de dados no chat (/roll 2d6+3) | Alta | ⏸️ Bloqueado | 5h |
-| RF21 | Rolagens privadas (/w gm 1d20) | Alta | ⏸️ Bloqueado | 3h |
-| RF22 | Histórico de rolagens com animação | Alta | ⏸️ Bloqueado | 4h |
-| RF24 | Suporte a emotes (/me ataca) | Alta | ⏸️ Bloqueado | 2h |
-| RF25 | Medir distância entre tokens | Alta | ⏸️ Bloqueado | 3h |
+| RF23 | Chat em tempo real com timestamp | Alta | ✅ Concluído | 6h |
+| RF20 | Rolagem de dados no chat (/roll 2d6+3) | Alta | ✅ Concluído | 5h |
+| RF21 | Rolagens privadas (/w gm 1d20) | Alta | ✅ Concluído | 3h |
+| RF22 | Histórico de rolagens com animação | Alta | ✅ Concluído | 4h |
+| RF24 | Suporte a emotes (/me ataca) | Alta | ✅ Concluído | 2h |
+| RF25 | Medir distância entre tokens | Alta | ✅ Concluído | 3h |
 
 **Dependências:** Sprint 3 completa
 
@@ -176,16 +176,16 @@
 - **Sprint 1:** 6/6 (100%) - ✅ Completa
 - **Sprint 2:** 5/5 (100%) - ✅ Completa
 - **Sprint 3:** 7/7 (100%) - ✅ Completa
-- **Sprint 4:** 0/6 (0%)
+- **Sprint 4:** 6/6 (100%) - ✅ Completa
 - **Sprint 5:** 0/7 (0%)
 - **Sprint 6:** 0/4 (0%)
 - **Sprint 7:** 0/3 (0%)
 - **Sprint 8:** 0/8 (0%)
 
 ### Geral
-- **Concluído:** 18/45 (40%)
+- **Concluído:** 24/45 (53%)
 - **Em Andamento:** 0/45 (0%)
-- **Pendente:** 27/45 (60%)
+- **Pendente:** 21/45 (47%)
 
 ---
 

@@ -128,6 +128,7 @@ model ChatMessage {
   userId     Int      @map("user_id")
   content    String
   rollData   String?  @map("roll_data")
+  emoteData  String?  @map("emote_data")
   isPrivate  Boolean  @default(false) @map("is_private")
   whisperTo  Int?     @map("whisper_to")
   timestamp  DateTime @default(now())
