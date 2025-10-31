@@ -41,6 +41,8 @@ class SocketManager {
     this.connectedUsers.set(socket.userId, socket);
 
     socket.on('join-scene', this.handleJoinScene.bind(this, socket));
+    socket.on('join-campaign', this.handleJoinCampaign.bind(this, socket));
+    socket.on('send-message', this.handleSendMessage.bind(this, socket));
     socket.on('move-token', this.handleMoveToken.bind(this, socket));
     socket.on('rotate-token', this.handleRotateToken.bind(this, socket));
     socket.on('resize-token', this.handleResizeToken.bind(this, socket));
@@ -50,6 +52,49 @@ class SocketManager {
   handleJoinScene(socket, { sceneId }) {
     socket.join(`scene-${sceneId}`);
     console.log(`Usuário ${socket.userId} entrou na cena ${sceneId}`);
+  }
+
+  handleJoinCampaign(socket, { campaignId }) {
+    socket.join(`campaign-${campaignId}`);
+    console.log(`Usuário ${socket.userId} entrou na campanha ${campaignId}`);
+  }
+
+  async handleSendMessage(socket, { content, campaignId, sceneId }) {
+    try {
+      // Criar mensagem no banco
+      const messageData = {
+        content: content.trim(),
+        campaignId: parseInt(campaignId),
+        userId: socket.userId,
+        timestamp: new Date(),
+        isPrivate: false
+      };
+
+      if (sceneId) {
+        messageData.sceneId = parseInt(sceneId);
+      }
+
+      // Aqui deveria usar o repository, mas para simplificar:
+      const message = {
+        id: Date.now(),
+        ...messageData,
+        user: {
+          id: socket.userId,
+          name: 'Usuário' // TODO: pegar nome real do usuário
+        }
+      };
+
+      // Broadcast para todos na campanha
+      socket.to(`campaign-${campaignId}`).emit('new-message', {
+        message,
+        sentBy: socket.userId
+      });
+
+      // Confirmar para o remetente
+      socket.emit('message-sent', { message });
+    } catch (error) {
+      socket.emit('error', { message: 'Erro ao enviar mensagem' });
+    }
   }
 
   async handleMoveToken(socket, { tokenId, x, y, sceneId }) {
@@ -100,6 +145,12 @@ class SocketManager {
   emitToScene(sceneId, event, data) {
     if (this.io) {
       this.io.to(`scene-${sceneId}`).emit(event, data);
+    }
+  }
+
+  emitToCampaign(campaignId, event, data) {
+    if (this.io) {
+      this.io.to(`campaign-${campaignId}`).emit(event, data);
     }
   }
 }

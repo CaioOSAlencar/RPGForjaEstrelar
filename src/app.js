@@ -8,6 +8,7 @@ import campaignRoutes from "./routes/campaignRoutes.js";
 import sceneRoutes from "./routes/sceneRoutes.js";
 import tokenRoutes from "./routes/tokenRoutes.js";
 import realtimeRoutes from "./routes/realtimeRoutes.js";
+import chatRoutes from "./routes/chatRoutes.js";
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use("/campaigns", campaignRoutes);
 app.use("/scenes", sceneRoutes);
 app.use("/tokens", tokenRoutes);
 app.use("/realtime", realtimeRoutes);
+app.use("/chat", chatRoutes);
 
 // Swagger na raiz
 const swaggerOptions = getSwaggerOptions();
