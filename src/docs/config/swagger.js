@@ -59,10 +59,10 @@ const getSwaggerOptions = () => ({
         name: '🎭 Tokens', 
         description: 'RF13, RF14, RF15 - Upload, gerenciamento, movimentação, rotação e redimensionamento de tokens'
       },
-      // RF23 - Chat
+      // RF23, RF20 - Chat e Dados
       { 
         name: '💬 Chat', 
-        description: 'RF23 - Chat em tempo real com timestamp e nome do usuário'
+        description: 'RF23, RF20 - Chat em tempo real com timestamp, nome do usuário e rolagem de dados'
       }
     ],
     paths: {

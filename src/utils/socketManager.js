@@ -61,13 +61,38 @@ class SocketManager {
 
   async handleSendMessage(socket, { content, campaignId, sceneId }) {
     try {
+      // RF20/RF21 - Verificar se é comando de dados
+      let rollData = null;
+      let processedContent = content.trim();
+      let isPrivate = false;
+      
+      if (this.isDiceCommand(processedContent)) {
+        try {
+          rollData = this.calculateDiceRoll(processedContent);
+          processedContent = `🎲 **${rollData.expression}**: ${rollData.breakdown}`;
+        } catch (error) {
+          socket.emit('error', { message: error.message });
+          return;
+        }
+      } else if (this.isPrivateDiceCommand(processedContent)) {
+        try {
+          rollData = this.calculatePrivateDiceRoll(processedContent);
+          processedContent = `🔒 **Rolagem Privada para GM - ${rollData.expression}**: ${rollData.breakdown}`;
+          isPrivate = true;
+        } catch (error) {
+          socket.emit('error', { message: error.message });
+          return;
+        }
+      }
+
       // Criar mensagem no banco
       const messageData = {
-        content: content.trim(),
+        content: processedContent,
         campaignId: parseInt(campaignId),
         userId: socket.userId,
         timestamp: new Date(),
-        isPrivate: false
+        isPrivate: isPrivate,
+        rollData: rollData ? JSON.stringify(rollData) : null
       };
 
       if (sceneId) {
@@ -84,17 +109,124 @@ class SocketManager {
         }
       };
 
-      // Broadcast para todos na campanha
-      socket.to(`campaign-${campaignId}`).emit('new-message', {
-        message,
-        sentBy: socket.userId
-      });
-
-      // Confirmar para o remetente
-      socket.emit('message-sent', { message });
+      // RF21/RF22 - Broadcast baseado no tipo de mensagem
+      if (isPrivate) {
+        // Mensagem privada: enviar apenas para o GM
+        socket.emit('private-message-sent', { 
+          message,
+          targetUser: 'GM'
+        });
+      } else {
+        // Mensagem pública: broadcast para todos na campanha
+        const eventData = {
+          message,
+          sentBy: socket.userId
+        };
+        
+        // RF22 - Adicionar animação para rolagens
+        if (rollData) {
+          eventData.animation = {
+            type: 'dice-roll',
+            diceCount: rollData.rolls.length,
+            rolls: rollData.rolls,
+            duration: 2000
+          };
+        }
+        
+        socket.to(`campaign-${campaignId}`).emit('new-message', eventData);
+        socket.emit('message-sent', { message, animation: eventData.animation });
+      }
     } catch (error) {
       socket.emit('error', { message: 'Erro ao enviar mensagem' });
     }
+  }
+
+  // RF20/RF21 - Métodos auxiliares para dados
+  isDiceCommand(content) {
+    return /^\/roll\s+\d+d\d+([+-]\d+)?$/i.test(content.trim());
+  }
+
+  isPrivateDiceCommand(content) {
+    return /^\/w\s+gm\s+\d+d\d+([+-]\d+)?$/i.test(content.trim());
+  }
+
+  calculatePrivateDiceRoll(command) {
+    const diceExpression = command.replace(/^\/w\s+gm\s+/i, '').trim();
+    const diceRegex = /^(\d+)d(\d+)([+-]\d+)?$/i;
+    const match = diceExpression.match(diceRegex);
+    
+    if (!match) {
+      throw new Error('Formato inválido. Use: /w gm XdY+Z (ex: /w gm 1d20+5)');
+    }
+    
+    const numDice = parseInt(match[1]);
+    const diceSides = parseInt(match[2]);
+    const modifier = match[3] ? parseInt(match[3]) : 0;
+    
+    if (numDice < 1 || numDice > 20) {
+      throw new Error('Número de dados deve ser entre 1 e 20');
+    }
+    
+    if (diceSides < 2 || diceSides > 100) {
+      throw new Error('Lados do dado devem ser entre 2 e 100');
+    }
+    
+    const rolls = [];
+    for (let i = 0; i < numDice; i++) {
+      rolls.push(Math.floor(Math.random() * diceSides) + 1);
+    }
+    
+    const sum = rolls.reduce((total, roll) => total + roll, 0);
+    const total = sum + modifier;
+    
+    return {
+      expression: diceExpression,
+      rolls,
+      sum,
+      modifier,
+      total,
+      breakdown: `${rolls.join(' + ')}${modifier !== 0 ? ` ${modifier >= 0 ? '+' : ''}${modifier}` : ''} = ${total}`,
+      isPrivate: true
+    };
+  }
+
+  calculateDiceRoll(command) {
+    const diceExpression = command.replace(/^\/roll\s+/i, '').trim();
+    const diceRegex = /^(\d+)d(\d+)([+-]\d+)?$/i;
+    const match = diceExpression.match(diceRegex);
+    
+    if (!match) {
+      throw new Error('Formato inválido. Use: /roll XdY+Z (ex: /roll 2d6+3)');
+    }
+    
+    const numDice = parseInt(match[1]);
+    const diceSides = parseInt(match[2]);
+    const modifier = match[3] ? parseInt(match[3]) : 0;
+    
+    if (numDice < 1 || numDice > 20) {
+      throw new Error('Número de dados deve ser entre 1 e 20');
+    }
+    
+    if (diceSides < 2 || diceSides > 100) {
+      throw new Error('Lados do dado devem ser entre 2 e 100');
+    }
+    
+    const rolls = [];
+    for (let i = 0; i < numDice; i++) {
+      rolls.push(Math.floor(Math.random() * diceSides) + 1);
+    }
+    
+    const sum = rolls.reduce((total, roll) => total + roll, 0);
+    const total = sum + modifier;
+    
+    return {
+      expression: diceExpression,
+      rolls,
+      sum,
+      modifier,
+      total,
+      breakdown: `${rolls.join(' + ')}${modifier !== 0 ? ` ${modifier >= 0 ? '+' : ''}${modifier}` : ''} = ${total}`
+    };
   }
 
   async handleMoveToken(socket, { tokenId, x, y, sceneId }) {
@@ -151,6 +283,14 @@ class SocketManager {
   emitToCampaign(campaignId, event, data) {
     if (this.io) {
       this.io.to(`campaign-${campaignId}`).emit(event, data);
+    }
+  }
+
+  // RF21 - Emitir evento para usuário específico
+  emitToUser(userId, event, data) {
+    if (this.io && this.connectedUsers.has(userId)) {
+      const userSocket = this.connectedUsers.get(userId);
+      userSocket.emit(event, data);
     }
   }
 }

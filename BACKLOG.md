@@ -81,8 +81,8 @@
 |----|-----------|------------|--------|------------|
 | RF23 | Chat em tempo real com timestamp | Alta | ⏸️ Bloqueado | 6h |
 | RF20 | Rolagem de dados no chat (/roll 2d6+3) | Alta | ⏸️ Bloqueado | 5h |
-| RF21 | Rolagens privadas (/w gm 1d20) | Alta | ⏸️ Bloqueado | 3h |
-| RF22 | Histórico de rolagens com animação | Alta | ⏸️ Bloqueado | 4h |
+| RF21 | Rolagens privadas (/w gm 1d20) | Alta | ✅ Concluído | 3h |
+| RF22 | Histórico de rolagens com animação | Alta | ✅ Concluído | 4h |
 | RF24 | Suporte a emotes (/me ataca) | Alta | ⏸️ Bloqueado | 2h |
 | RF25 | Medir distância entre tokens | Alta | ⏸️ Bloqueado | 3h |
 
