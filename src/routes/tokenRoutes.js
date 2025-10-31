@@ -5,12 +5,19 @@ import {
   getTokenDetails,
   updateTokenProperties,
   deleteTokenById,
-  listUserTokens
+  listUserTokens,
+  linkTokenToSheet,
+  updateTokenHP,
+  updateTokenConditions,
+  getAvailableConditions
 } from '../controllers/tokenController.js';
 import { authenticateToken } from '../middlewares/authMiddleware.js';
 import { uploadToken } from '../utils/fileUpload.js';
 
 const router = express.Router();
+
+// RF37 - Listar condições disponíveis
+router.get('/conditions', authenticateToken, getAvailableConditions);
 
 // RF13 - Criar token com upload de imagem (rota protegida)
 router.post('/', authenticateToken, uploadToken, createNewToken);
@@ -26,6 +33,15 @@ router.get('/:tokenId', authenticateToken, getTokenDetails);
 
 // RF14/RF15 - Atualizar propriedades do token (rota protegida)
 router.put('/:tokenId', authenticateToken, updateTokenProperties);
+
+// RF16 - Vincular token à ficha (rota protegida)
+router.patch('/:tokenId/link-sheet', authenticateToken, linkTokenToSheet);
+
+// RF17 - Atualizar HP do token (rota protegida)
+router.patch('/:tokenId/hp', authenticateToken, updateTokenHP);
+
+// RF37 - Atualizar condições do token (rota protegida)
+router.patch('/:tokenId/conditions', authenticateToken, updateTokenConditions);
 
 // RF45 - Deletar token (rota protegida)
 router.delete('/:tokenId', authenticateToken, deleteTokenById);

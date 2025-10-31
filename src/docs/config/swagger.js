@@ -22,6 +22,21 @@ import tokenSchemas from '../schemas/tokens/tokenSchemas.js';
 import chatRoutes from '../routes/chat/chatRoutes.js';
 import chatSchemas from '../schemas/chat/chatSchemas.js';
 
+// Importar documentação de distância
+import distanceRoutes from '../routes/distanceRoutes.js';
+import distanceSchemas from '../schemas/distanceSchemas.js';
+
+// Importar documentação de fichas
+import characterSheetRoutes from '../routes/characterSheetRoutes.js';
+import characterSheetSchemas from '../schemas/characterSheetSchemas.js';
+
+// Importar documentação de dados
+import diceRoutes from '../routes/diceRoutes.js';
+import diceSchemas from '../schemas/diceSchemas.js';
+
+// Importar documentação de realtime
+import realtimeRoutes from '../routes/realtimeRoutes.js';
+
 
 
 const getSwaggerOptions = () => ({
@@ -59,10 +74,25 @@ const getSwaggerOptions = () => ({
         name: '🎭 Tokens', 
         description: 'RF13, RF14, RF15 - Upload, gerenciamento, movimentação, rotação e redimensionamento de tokens'
       },
-      // RF23, RF20 - Chat e Dados
+      // RF23, RF20, RF21, RF22, RF24 - Chat e Dados
       { 
         name: '💬 Chat', 
-        description: 'RF23, RF20 - Chat em tempo real com timestamp, nome do usuário e rolagem de dados'
+        description: 'RF23, RF20, RF21, RF22, RF24 - Chat em tempo real, rolagens públicas/privadas, histórico, emotes'
+      },
+      // RF25 - Medição de Distância
+      { 
+        name: '📏 Distância', 
+        description: 'RF25 - Medir distância entre tokens baseado no grid'
+      },
+      // RF18, RF19 - Fichas de Personagem
+      { 
+        name: '📋 Fichas', 
+        description: 'RF18, RF19 - Criar fichas com atributos JSON, rolar dados da ficha'
+      },
+      // RF20 - Rolagem de Dados
+      { 
+        name: '🎲 Dados', 
+        description: 'RF20 - Testar rolagem de dados com comandos /roll'
       }
     ],
     paths: {
@@ -72,7 +102,11 @@ const getSwaggerOptions = () => ({
       ...campaignRoutes,
       ...sceneRoutes,
       ...tokenRoutes,
-      ...chatRoutes
+      ...chatRoutes,
+      ...distanceRoutes,
+      ...characterSheetRoutes,
+      ...diceRoutes,
+      ...realtimeRoutes
     },
     components: {
       schemas: {
@@ -80,13 +114,77 @@ const getSwaggerOptions = () => ({
         ...campaignSchemas,
         ...sceneSchemas,
         ...tokenSchemas,
-        ...chatSchemas
+        ...chatSchemas,
+        ...distanceSchemas,
+        ...characterSheetSchemas,
+        ...diceSchemas,
+        SuccessResponse: {
+          type: 'object',
+          properties: {
+            success: { type: 'boolean', example: true },
+            message: { type: 'string', example: 'Operação realizada com sucesso' }
+          }
+        },
+        ErrorResponse: {
+          type: 'object',
+          properties: {
+            success: { type: 'boolean', example: false },
+            message: { type: 'string', example: 'Erro na operação' },
+            errors: {
+              type: 'array',
+              items: { type: 'string' },
+              example: ['Detalhes do erro']
+            }
+          }
+        }
       },
       securitySchemes: {
         bearerAuth: {
           type: 'http',
           scheme: 'bearer',
           bearerFormat: 'JWT'
+        }
+      },
+      responses: {
+        BadRequest: {
+          description: 'Dados inválidos',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+            }
+          }
+        },
+        Unauthorized: {
+          description: 'Token inválido ou ausente',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+            }
+          }
+        },
+        Forbidden: {
+          description: 'Sem permissão para esta ação',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+            }
+          }
+        },
+        NotFound: {
+          description: 'Recurso não encontrado',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+            }
+          }
+        },
+        InternalError: {
+          description: 'Erro interno do servidor',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+            }
+          }
         }
       }
     }

@@ -46,6 +46,8 @@ class SocketManager {
     socket.on('move-token', this.handleMoveToken.bind(this, socket));
     socket.on('rotate-token', this.handleRotateToken.bind(this, socket));
     socket.on('resize-token', this.handleResizeToken.bind(this, socket));
+    socket.on('update-token-hp', this.handleUpdateTokenHP.bind(this, socket));
+    socket.on('update-token-conditions', this.handleUpdateTokenConditions.bind(this, socket));
     socket.on('measure-distance', this.handleMeasureDistance.bind(this, socket));
     socket.on('disconnect', this.handleDisconnect.bind(this, socket));
   }
@@ -305,6 +307,45 @@ class SocketManager {
       }
     } catch (error) {
       socket.emit('error', { message: 'Erro ao redimensionar token' });
+    }
+  }
+
+  // RF17 - Atualizar HP do token em tempo real
+  async handleUpdateTokenHP(socket, { tokenId, hp, maxHp, sceneId }) {
+    try {
+      const updateData = {};
+      if (hp !== undefined) updateData.hp = parseInt(hp);
+      if (maxHp !== undefined) updateData.maxHp = parseInt(maxHp);
+      
+      const updatedToken = await tokenRepository.updateToken(tokenId, updateData);
+      if (updatedToken) {
+        socket.to(`scene-${sceneId}`).emit('token-hp-updated', {
+          tokenId, 
+          hp: updatedToken.hp, 
+          maxHp: updatedToken.maxHp, 
+          updatedBy: socket.userId
+        });
+      }
+    } catch (error) {
+      socket.emit('error', { message: 'Erro ao atualizar HP do token' });
+    }
+  }
+
+  // RF37 - Atualizar condições do token em tempo real
+  async handleUpdateTokenConditions(socket, { tokenId, conditions, sceneId }) {
+    try {
+      const updatedToken = await tokenRepository.updateToken(tokenId, { 
+        conditions: JSON.stringify(conditions) 
+      });
+      if (updatedToken) {
+        socket.to(`scene-${sceneId}`).emit('token-conditions-updated', {
+          tokenId, 
+          conditions, 
+          updatedBy: socket.userId
+        });
+      }
+    } catch (error) {
+      socket.emit('error', { message: 'Erro ao atualizar condições do token' });
     }
   }
 

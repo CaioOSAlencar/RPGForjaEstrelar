@@ -9,6 +9,8 @@ import {
 } from '../repositories/tokenRepository.js';
 import { findSceneById } from '../repositories/sceneRepository.js';
 import { sendResponse, sendError } from '../utils/messages.js';
+import socketManager from '../utils/socketManager.js';
+import { validateConditions, processConditionsForDisplay, getAllConditions } from '../utils/conditionsManager.js';
 import asyncHandler from 'express-async-handler';
 
 // RF13 - Criar token com upload de imagem
@@ -174,4 +176,128 @@ export const listUserTokens = asyncHandler(async (req, res) => {
   const tokens = await findTokensByUser(userId);
 
   return sendResponse(res, 200, { data: tokens, message: 'Seus tokens listados com sucesso' });
+});
+
+// RF16 - Vincular token à ficha de personagem
+export const linkTokenToSheet = asyncHandler(async (req, res) => {
+  const { tokenId } = req.params;
+  const { characterSheetId } = req.body;
+  const userId = req.user.id;
+
+  const token = await findTokenById(parseInt(tokenId));
+  if (!token) {
+    return sendError(res, 404, 'Token não encontrado');
+  }
+
+  // Verificar se usuário é o mestre da campanha
+  if (token.scene.campaign.masterId !== userId) {
+    return sendError(res, 403, 'Apenas o mestre pode vincular tokens');
+  }
+
+  // Se characterSheetId for null, desvincular
+  const updateData = { characterSheetId: characterSheetId ? parseInt(characterSheetId) : null };
+  
+  const updatedToken = await updateToken(parseInt(tokenId), updateData);
+
+  return sendResponse(res, 200, { 
+    data: updatedToken, 
+    message: characterSheetId ? 'Token vinculado à ficha!' : 'Token desvinculado da ficha!' 
+  });
+});
+
+// RF17 - Atualizar HP do token em tempo real
+export const updateTokenHP = asyncHandler(async (req, res) => {
+  const { tokenId } = req.params;
+  const { hp, maxHp } = req.body;
+  const userId = req.user.id;
+
+  if (hp === undefined && maxHp === undefined) {
+    return sendError(res, 400, 'HP atual ou máximo deve ser fornecido');
+  }
+
+  const token = await findTokenById(parseInt(tokenId));
+  if (!token) {
+    return sendError(res, 404, 'Token não encontrado');
+  }
+
+  // Verificar permissões: mestre ou dono do token
+  if (token.scene.campaign.masterId !== userId && token.userId !== userId) {
+    return sendError(res, 403, 'Você não tem permissão para alterar o HP deste token');
+  }
+
+  const updateData = {};
+  if (hp !== undefined) updateData.hp = parseInt(hp);
+  if (maxHp !== undefined) updateData.maxHp = parseInt(maxHp);
+
+  const updatedToken = await updateToken(parseInt(tokenId), updateData);
+
+  // Emitir evento WebSocket para atualização em tempo real
+  socketManager.emitToScene(token.sceneId, 'token-hp-updated', {
+    tokenId: parseInt(tokenId),
+    hp: updatedToken.hp,
+    maxHp: updatedToken.maxHp,
+    updatedBy: userId
+  });
+
+  return sendResponse(res, 200, { 
+    data: updatedToken, 
+    message: 'HP do token atualizado com sucesso!' 
+  });
+});
+
+// RF37 - Atualizar condições do token
+export const updateTokenConditions = asyncHandler(async (req, res) => {
+  const { tokenId } = req.params;
+  const { conditions } = req.body;
+  const userId = req.user.id;
+
+  const token = await findTokenById(parseInt(tokenId));
+  if (!token) {
+    return sendError(res, 404, 'Token não encontrado');
+  }
+
+  // Verificar permissões: mestre ou dono do token
+  if (token.scene.campaign.masterId !== userId && token.userId !== userId) {
+    return sendError(res, 403, 'Você não tem permissão para alterar as condições deste token');
+  }
+
+  // Validar formato das condições
+  let conditionsData = conditions || [];
+  if (typeof conditions === 'string') {
+    try {
+      conditionsData = JSON.parse(conditions);
+    } catch (error) {
+      return sendError(res, 400, 'Formato de condições inválido');
+    }
+  }
+
+  const validation = validateConditions(conditionsData);
+  if (!validation.isValid) {
+    return sendError(res, 400, validation.error);
+  }
+
+  const updatedToken = await updateToken(parseInt(tokenId), { 
+    conditions: JSON.stringify(conditionsData) 
+  });
+
+  // Emitir evento WebSocket para atualização em tempo real
+  socketManager.emitToScene(token.sceneId, 'token-conditions-updated', {
+    tokenId: parseInt(tokenId),
+    conditions: conditionsData,
+    updatedBy: userId
+  });
+
+  return sendResponse(res, 200, { 
+    data: updatedToken, 
+    message: 'Condições do token atualizadas com sucesso!' 
+  });
+});
+
+// RF37 - Listar condições disponíveis
+export const getAvailableConditions = asyncHandler(async (req, res) => {
+  const conditions = getAllConditions();
+  return sendResponse(res, 200, { 
+    data: conditions, 
+    message: 'Condições disponíveis listadas com sucesso' 
+  });
 });
