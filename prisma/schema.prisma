@@ -43,6 +43,7 @@ model Campaign {
   chatMessages    ChatMessage[]
   notes           Note[]
   backgroundMusic BackgroundMusic[]
+  soundEffects    SoundEffect[]
   invites         CampaignInvite[]
 
   @@map("campaigns")
@@ -114,9 +115,10 @@ model CharacterSheet {
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 
-  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  campaign Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
-  tokens   Token[]
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  campaign   Campaign    @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  tokens     Token[]
+  diceMacros DiceMacro[]
 
   @@map("character_sheets")
 }
@@ -150,11 +152,26 @@ model Note {
   recipients String?
   createdBy  Int      @map("created_by")
   createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
 
   campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   creator  User     @relation(fields: [createdBy], references: [id], onDelete: Cascade)
 
   @@map("notes")
+}
+
+model DiceMacro {
+  id               Int      @id @default(autoincrement())
+  characterSheetId Int      @map("character_sheet_id")
+  name             String
+  expression       String
+  description      String?
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  characterSheet CharacterSheet @relation(fields: [characterSheetId], references: [id], onDelete: Cascade)
+
+  @@map("dice_macros")
 }
 
 model BackgroundMusic {
@@ -164,11 +181,25 @@ model BackgroundMusic {
   url        String
   volume     Float    @default(0.7)
   isLooping  Boolean  @default(true) @map("is_looping")
+  isPlaying  Boolean  @default(false) @map("is_playing")
   createdAt  DateTime @default(now()) @map("created_at")
 
   campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
 
   @@map("background_music")
+}
+
+model SoundEffect {
+  id         Int      @id @default(autoincrement())
+  campaignId Int      @map("campaign_id")
+  name       String
+  url        String
+  volume     Float    @default(1.0)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@map("sound_effects")
 }
 
 model CampaignInvite {

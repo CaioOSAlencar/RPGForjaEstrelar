@@ -115,31 +115,31 @@
 | RF29 | Tema claro/escuro alternável | Alta | ⏸️ Bloqueado | 4h |
 | RF30 | Interface responsiva (desktop/mobile) | Alta | ⏸️ Bloqueado | 8h |
 | RF33 | Desenhar linhas e formas no mapa | Média | ⏸️ Bloqueado | 6h |
-| RF35 | Salvar macros de rolagem na ficha | Média | ⏸️ Bloqueado | 4h |
+| RF35 | Salvar macros de rolagem na ficha | Média | 🔄 Backend | 4h |
 
 ---
 
-## 📚 SPRINT 7 - JOURNAL E NARRATIVA
-**Duração:** 1 semana | **Status:** ⏸️ Aguardando
+## 🔄 SPRINT 7 - JOURNAL E NARRATIVA
+**Duração:** 1 semana | **Status:** 🔄 Backend Completo
 
 | ID | Descrição | Prioridade | Status | Estimativa |
 |----|-----------|------------|--------|------------|
-| RF38 | Criar notas com Markdown | Média | ⏸️ Bloqueado | 4h |
-| RF39 | Enviar handouts aos jogadores | Média | ⏸️ Bloqueado | 3h |
-| RF40 | Busca em notas e itens | Baixa | ⏸️ Bloqueado | 3h |
+| RF38 | Criar notas com Markdown | Média | 🔄 Backend | 4h |
+| RF39 | Enviar handouts aos jogadores | Média | 🔄 Backend | 3h |
+| RF40 | Busca em notas e itens | Baixa | 🔄 Backend | 3h |
 
 ---
 
-## 🎵 SPRINT 8 - MÍDIA E RECURSOS AVANÇADOS
-**Duração:** 1-2 semanas | **Status:** ⏸️ Aguardando
+## 🔄 SPRINT 8 - MÍDIA E RECURSOS AVANÇADOS
+**Duração:** 1-2 semanas | **Status:** 🔄 Backend Completo
 
 | ID | Descrição | Prioridade | Status | Estimativa |
 |----|-----------|------------|--------|------------|
-| RF28 | Upload e controle de música de fundo | Média | ⏸️ Bloqueado | 5h |
-| RF41 | Playlist de músicas | Média | ⏸️ Bloqueado | 3h |
-| RF42 | Efeitos sonoros rápidos | Baixa | ⏸️ Bloqueado | 4h |
-| RF26 | Exportar campanha em JSON | Média | ⏸️ Bloqueado | 4h |
-| RF27 | Importar campanha de JSON | Média | ⏸️ Bloqueado | 4h |
+| RF28 | Upload e controle de música de fundo | Média | 🔄 Backend | 5h |
+| RF41 | Playlist de músicas | Média | 🔄 Backend | 3h |
+| RF42 | Efeitos sonoros rápidos | Baixa | 🔄 Backend | 4h |
+| RF26 | Exportar campanha em JSON | Média | 🔄 Backend | 4h |
+| RF27 | Importar campanha de JSON | Média | 🔄 Backend | 4h |
 | RF31 | Fog of War com revelação gradual | Média | ⏸️ Bloqueado | 8h |
 | RF32 | Visão limitada por token | Média | ⏸️ Bloqueado | 6h |
 
@@ -178,22 +178,23 @@
 - **Sprint 3:** 7/7 (100%) - ✅ Completa
 - **Sprint 4:** 6/6 (100%) - ✅ Completa
 - **Sprint 5:** 7/7 (100%) - ✅ Completa
-- **Sprint 6:** 0/4 (0%)
-- **Sprint 7:** 0/3 (0%)
-- **Sprint 8:** 0/8 (0%)
+- **Sprint 6:** 0/4 (0%) - RF35 movido para Sprint 7
+- **Sprint 7:** 0/3 (0%) - Backend completo, aguardando frontend
+- **Sprint 8:** 0/8 (0%) - Backend completo, aguardando frontend
 
 ### Geral
 - **Concluído:** 31/45 (69%)
 - **Em Andamento:** 0/45 (0%)
-- **Pendente:** 14/45 (31%)
+- **Backend Completo:** 9/45 (20%)
+- **Pendente:** 10/45 (22%)
 
 ---
 
 ## 🎯 PRÓXIMOS PASSOS
 
-1. **Agora:** Iniciar Sprint 6 - Interface e UX
-2. **Depois:** RF29 - Tema claro/escuro
-3. **Em seguida:** RF30 - Interface responsiva
+1. **Agora:** Implementar frontend dos requisitos com backend pronto
+2. **Depois:** RF31/RF32 - Fog of War e visão limitada (frontend)
+3. **Em seguida:** Iniciar desenvolvimento do frontend React
 
 **Comando para continuar:**
 ```bash
@@ -212,11 +213,24 @@ npm run dev
 - **Utils:** Helpers padronizados ✅
 - **Próximo:** Sistema de mapas e tokens
 
-**Última atualização:** Sprint 5 completa - Iniciando Sprint 6
+**Última atualização:** Backend da Sprint 8 completo - RF28, RF41, RF42, RF26, RF27 (APIs prontas)
 
 ---
 
 ## 🏆 CONQUISTAS RECENTES
+
+### Sprint 8 - Mídia e Recursos Avançados (Backend Completo)
+- 🔄 **RF28** - API de música de fundo com controle (backend pronto)
+- 🔄 **RF41** - API de playlist de músicas (backend pronto)
+- 🔄 **RF42** - API de efeitos sonoros rápidos (backend pronto)
+- 🔄 **RF26** - API de exportação de campanha em JSON (backend pronto)
+- 🔄 **RF27** - API de importação de campanha de JSON (backend pronto)
+
+### Sprint 7 - Journal e Narrativa (Backend Completo)
+- 🔄 **RF38** - API de notas com Markdown (backend pronto)
+- 🔄 **RF39** - API de handouts com permissões (backend pronto)
+- 🔄 **RF40** - API de busca em notas (backend pronto)
+- 🔄 **RF35** - API de macros de rolagem (backend pronto)
 
 ### Sprint 5 - Fichas de Personagem (100% Completa)
 - ✅ **RF18** - Criar fichas com atributos em JSON
@@ -245,6 +259,12 @@ npm run dev
 - 📋 **Fichas de personagem** flexíveis com JSON e cálculos automáticos
 - 📊 **Barras de HP** e condições em tempo real nos tokens
 - 📏 **Medição de distância** baseada no grid
+- 📝 **APIs de notas** com Markdown e handouts (backend)
+- 🔍 **API de busca** em notas e conteúdo (backend)
+- 🎲 **API de macros** de rolagem nas fichas (backend)
+- 🎵 **APIs de música** com controle e playlists (backend)
+- 🔊 **API de efeitos sonoros** rápidos (backend)
+- 📦 **APIs de import/export** de campanhas JSON (backend)
 - ⚡ **WebSocket (Socket.io)** para sincronização em tempo real
 - 📚 **Documentação Swagger** 100% completa e atualizada
 - 🛠️ **Arquitetura limpa** com utils padronizados e validações
