@@ -5,6 +5,9 @@ import swaggerJSDoc from "swagger-jsdoc";
 import getSwaggerOptions from "./docs/config/swagger.js";
 import authRoutes from "./routes/authRoutes.js";
 import campaignRoutes from "./routes/campaignRoutes.js";
+import sceneRoutes from "./routes/sceneRoutes.js";
+import tokenRoutes from "./routes/tokenRoutes.js";
+import realtimeRoutes from "./routes/realtimeRoutes.js";
 
 const app = express();
 
@@ -15,6 +18,9 @@ app.use(express.json());
 // Rotas da API
 app.use("/auth", authRoutes);
 app.use("/campaigns", campaignRoutes);
+app.use("/scenes", sceneRoutes);
+app.use("/tokens", tokenRoutes);
+app.use("/realtime", realtimeRoutes);
 
 // Swagger na raiz
 const swaggerOptions = getSwaggerOptions();
