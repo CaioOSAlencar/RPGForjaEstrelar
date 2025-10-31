@@ -95,10 +95,10 @@
 
 | ID | Descrição | Prioridade | Status | Estimativa |
 |----|-----------|------------|--------|------------|
-| RF18 | Criar ficha com atributos em JSON | Alta | ⏸️ Bloqueado | 8h |
-| RF19 | Rolar dados da ficha (1d20 + FOR) | Alta | ⏸️ Bloqueado | 4h |
-| RF16 | Vincular token à ficha de personagem | Alta | ⏸️ Bloqueado | 3h |
-| RF17 | Barra de HP nos tokens em tempo real | Alta | ⏸️ Bloqueado | 4h |
+| RF18 | Criar ficha com atributos em JSON | Alta | ✅ Concluído | 8h |
+| RF19 | Rolar dados da ficha (1d20 + FOR) | Alta | ✅ Concluído | 4h |
+| RF16 | Vincular token à ficha de personagem | Alta | ✅ Concluído | 3h |
+| RF17 | Barra de HP nos tokens em tempo real | Alta | ✅ Concluído | 4h |
 | RF36 | Calcular modificadores automaticamente | Alta | ⏸️ Bloqueado | 5h |
 | RF37 | Exibir condições nos tokens | Média | ⏸️ Bloqueado | 3h |
 | RF44 | Mestre editar qualquer ficha | Alta | ⏸️ Bloqueado | 2h |

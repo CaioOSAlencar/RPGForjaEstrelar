@@ -11,7 +11,7 @@ import realtimeRoutes from "./routes/realtimeRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import diceRoutes from "./routes/diceRoutes.js";
 import distanceRoutes from "./routes/distanceRoutes.js";
-import distanceRoutes from "./routes/distanceRoutes.js";
+import characterSheetRoutes from "./routes/characterSheetRoutes.js";
 
 const app = express();
 
@@ -28,7 +28,7 @@ app.use("/api/realtime", realtimeRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/dice", diceRoutes);
 app.use("/api/distance", distanceRoutes);
-app.use("/api/distance", distanceRoutes);
+app.use("/api/character-sheets", characterSheetRoutes);
 
 // Swagger na raiz
 const swaggerOptions = getSwaggerOptions();
