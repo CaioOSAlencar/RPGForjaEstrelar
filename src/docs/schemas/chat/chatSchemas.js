@@ -38,6 +38,11 @@ export default {
         nullable: true,
         description: 'Dados de rolagem em JSON (se aplicável)'
       },
+      emoteData: {
+        type: 'string',
+        nullable: true,
+        description: 'Dados de emote em JSON (RF24)'
+      },
       whisperUser: {
         type: 'object',
         nullable: true,
@@ -90,6 +95,7 @@ export default {
       },
       rollData: {
         type: 'object',
+        nullable: true,
         properties: {
           expression: {
             type: 'string',
@@ -115,6 +121,28 @@ export default {
           breakdown: {
             type: 'string',
             description: 'Detalhamento da rolagem'
+          }
+        }
+      },
+      emoteData: {
+        type: 'object',
+        nullable: true,
+        properties: {
+          originalContent: {
+            type: 'string',
+            description: 'Comando original (/me ...)'
+          },
+          emoteText: {
+            type: 'string',
+            description: 'Texto da ação'
+          },
+          formattedContent: {
+            type: 'string',
+            description: 'Conteúdo formatado (*Usuário ação*)'
+          },
+          isEmote: {
+            type: 'boolean',
+            description: 'Sempre true para emotes'
           }
         }
       },

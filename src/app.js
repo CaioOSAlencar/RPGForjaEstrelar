@@ -10,6 +10,8 @@ import tokenRoutes from "./routes/tokenRoutes.js";
 import realtimeRoutes from "./routes/realtimeRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import diceRoutes from "./routes/diceRoutes.js";
+import distanceRoutes from "./routes/distanceRoutes.js";
+import distanceRoutes from "./routes/distanceRoutes.js";
 
 const app = express();
 
@@ -25,6 +27,8 @@ app.use("/api/tokens", tokenRoutes);
 app.use("/api/realtime", realtimeRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/dice", diceRoutes);
+app.use("/api/distance", distanceRoutes);
+app.use("/api/distance", distanceRoutes);
 
 // Swagger na raiz
 const swaggerOptions = getSwaggerOptions();

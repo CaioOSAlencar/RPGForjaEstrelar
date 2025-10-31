@@ -11,6 +11,7 @@ import { sendResponse, sendError } from '../utils/messages.js';
 import asyncHandler from 'express-async-handler';
 import socketManager from '../utils/socketManager.js';
 import { isDiceCommand, calculateDiceRoll, isPrivateDiceCommand, calculatePrivateDiceRoll } from '../utils/diceRoller.js';
+import { isEmoteCommand, processEmoteCommand } from '../utils/emoteProcessor.js';
 
 // RF23 - Enviar mensagem no chat
 export const sendMessage = asyncHandler(async (req, res) => {
@@ -35,8 +36,9 @@ export const sendMessage = asyncHandler(async (req, res) => {
     return sendError(res, 403, 'Apenas participantes da campanha podem enviar mensagens');
   }
 
-  // RF20/RF21 - Verificar se é comando de dados
+  // RF20/RF21/RF24 - Verificar tipo de comando
   let rollData = null;
+  let emoteData = null;
   let processedContent = content.trim();
   let isPrivate = false;
   let targetMasterId = null;
@@ -57,6 +59,15 @@ export const sendMessage = asyncHandler(async (req, res) => {
     } catch (error) {
       return sendError(res, 400, error.message);
     }
+  } else if (isEmoteCommand(processedContent)) {
+    try {
+      // TODO: Buscar nome real do usuário
+      const userName = 'Usuário'; // Placeholder
+      emoteData = processEmoteCommand(processedContent, userName);
+      processedContent = emoteData.formattedContent;
+    } catch (error) {
+      return sendError(res, 400, error.message);
+    }
   }
 
   // Preparar dados da mensagem
@@ -67,7 +78,8 @@ export const sendMessage = asyncHandler(async (req, res) => {
     timestamp: new Date(),
     isPrivate: isPrivate,
     targetUserId: targetMasterId,
-    rollData: rollData ? JSON.stringify(rollData) : null
+    rollData: rollData ? JSON.stringify(rollData) : null,
+    emoteData: emoteData ? JSON.stringify(emoteData) : null
   };
 
   // Se foi especificada uma cena
@@ -96,7 +108,7 @@ export const sendMessage = asyncHandler(async (req, res) => {
       sentBy: userId
     };
     
-    // RF22 - Adicionar animação para rolagens
+    // RF22/RF24 - Adicionar dados de animação
     if (rollData) {
       eventData.animation = {
         type: 'dice-roll',
@@ -104,12 +116,18 @@ export const sendMessage = asyncHandler(async (req, res) => {
         rolls: rollData.rolls,
         duration: 2000
       };
+    } else if (emoteData) {
+      eventData.emote = {
+        type: 'emote',
+        originalText: emoteData.emoteText,
+        userName: emoteData.formattedContent.match(/\*(.+?)\s/)[1]
+      };
     }
     
     socketManager.emitToCampaign(parseInt(campaignId), 'new-message', eventData);
   }
 
-  // RF22 - Incluir dados de animação na resposta
+  // RF22/RF24 - Incluir dados de animação/emote na resposta
   const responseData = { message };
   if (rollData) {
     responseData.animation = {
@@ -117,6 +135,12 @@ export const sendMessage = asyncHandler(async (req, res) => {
       diceCount: rollData.rolls.length,
       rolls: rollData.rolls,
       duration: 2000
+    };
+  } else if (emoteData) {
+    responseData.emote = {
+      type: 'emote',
+      originalText: emoteData.emoteText,
+      userName: emoteData.formattedContent.match(/\*(.+?)\s/)[1]
     };
   }
   

@@ -19,7 +19,8 @@ export default {
                   examples: [
                     'Olá pessoal!',
                     '/roll 1d20+5',
-                    '/w gm 1d20+3'
+                    '/w gm 1d20+3',
+                    '/me ataca com fúria'
                   ]
                 },
                 campaignId: {

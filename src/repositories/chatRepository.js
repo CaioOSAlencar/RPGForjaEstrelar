@@ -19,6 +19,7 @@ export const createMessage = async (messageData) => {
       isPrivate: true,
       whisperTo: true,
       rollData: true,
+      emoteData: true,
       user: {
         select: {
           id: true,
@@ -62,6 +63,7 @@ export const findMessagesByCampaign = async (campaignId, options = {}) => {
       isPrivate: true,
       whisperTo: true,
       rollData: true,
+      emoteData: true,
       user: {
         select: {
           id: true,
@@ -94,6 +96,7 @@ export const findMessageById = async (id) => {
       sceneId: true,
       isPrivate: true,
       rollData: true,
+      emoteData: true,
       whisperTo: true,
       user: {
         select: {
@@ -144,6 +147,7 @@ export const findDiceRollHistory = async (campaignId, options = {}) => {
       content: true,
       timestamp: true,
       rollData: true,
+      emoteData: true,
       isPrivate: true,
       user: {
         select: {

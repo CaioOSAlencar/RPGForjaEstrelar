@@ -46,6 +46,7 @@ class SocketManager {
     socket.on('move-token', this.handleMoveToken.bind(this, socket));
     socket.on('rotate-token', this.handleRotateToken.bind(this, socket));
     socket.on('resize-token', this.handleResizeToken.bind(this, socket));
+    socket.on('measure-distance', this.handleMeasureDistance.bind(this, socket));
     socket.on('disconnect', this.handleDisconnect.bind(this, socket));
   }
 
@@ -61,8 +62,9 @@ class SocketManager {
 
   async handleSendMessage(socket, { content, campaignId, sceneId }) {
     try {
-      // RF20/RF21 - Verificar se é comando de dados
+      // RF20/RF21/RF24 - Verificar tipo de comando
       let rollData = null;
+      let emoteData = null;
       let processedContent = content.trim();
       let isPrivate = false;
       
@@ -83,6 +85,15 @@ class SocketManager {
           socket.emit('error', { message: error.message });
           return;
         }
+      } else if (this.isEmoteCommand(processedContent)) {
+        try {
+          const userName = 'Usuário'; // TODO: pegar nome real
+          emoteData = this.processEmoteCommand(processedContent, userName);
+          processedContent = emoteData.formattedContent;
+        } catch (error) {
+          socket.emit('error', { message: error.message });
+          return;
+        }
       }
 
       // Criar mensagem no banco
@@ -92,7 +103,8 @@ class SocketManager {
         userId: socket.userId,
         timestamp: new Date(),
         isPrivate: isPrivate,
-        rollData: rollData ? JSON.stringify(rollData) : null
+        rollData: rollData ? JSON.stringify(rollData) : null,
+        emoteData: emoteData ? JSON.stringify(emoteData) : null
       };
 
       if (sceneId) {
@@ -123,7 +135,7 @@ class SocketManager {
           sentBy: socket.userId
         };
         
-        // RF22 - Adicionar animação para rolagens
+        // RF22/RF24 - Adicionar dados de animação/emote
         if (rollData) {
           eventData.animation = {
             type: 'dice-roll',
@@ -131,19 +143,47 @@ class SocketManager {
             rolls: rollData.rolls,
             duration: 2000
           };
+        } else if (emoteData) {
+          eventData.emote = {
+            type: 'emote',
+            originalText: emoteData.emoteText,
+            userName: emoteData.formattedContent.match(/\*(.+?)\s/)[1]
+          };
         }
         
         socket.to(`campaign-${campaignId}`).emit('new-message', eventData);
-        socket.emit('message-sent', { message, animation: eventData.animation });
+        socket.emit('message-sent', { 
+          message, 
+          animation: eventData.animation,
+          emote: eventData.emote 
+        });
       }
     } catch (error) {
       socket.emit('error', { message: 'Erro ao enviar mensagem' });
     }
   }
 
-  // RF20/RF21 - Métodos auxiliares para dados
+  // RF20/RF21/RF24 - Métodos auxiliares
   isDiceCommand(content) {
     return /^\/roll\s+\d+d\d+([+-]\d+)?$/i.test(content.trim());
+  }
+
+  isEmoteCommand(content) {
+    return /^\/me\s+.+$/i.test(content.trim());
+  }
+
+  processEmoteCommand(content, userName) {
+    const emoteText = content.replace(/^\/me\s+/i, '').trim();
+    if (!emoteText) {
+      throw new Error('Comando /me requer uma ação. Exemplo: /me ataca com fúria');
+    }
+    const formattedEmote = `*${userName} ${emoteText}*`;
+    return {
+      originalContent: content,
+      emoteText: emoteText,
+      formattedContent: formattedEmote,
+      isEmote: true
+    };
   }
 
   isPrivateDiceCommand(content) {
@@ -291,6 +331,57 @@ class SocketManager {
     if (this.io && this.connectedUsers.has(userId)) {
       const userSocket = this.connectedUsers.get(userId);
       userSocket.emit(event, data);
+    }
+  }
+
+  // RF25 - Medir distância entre tokens
+  async handleMeasureDistance(socket, { token1Id, token2Id, sceneId, unitType = 'feet' }) {
+    try {
+      // Importar funções necessárias
+      const { findTokenById } = await import('../repositories/tokenRepository.js');
+      const { findSceneById } = await import('../repositories/sceneRepository.js');
+      const { calculateGridDistance, convertGridToGameUnits } = await import('../utils/distanceCalculator.js');
+
+      // Buscar tokens
+      const token1 = await findTokenById(parseInt(token1Id));
+      const token2 = await findTokenById(parseInt(token2Id));
+
+      if (!token1 || !token2) {
+        socket.emit('distance-error', { message: 'Tokens não encontrados' });
+        return;
+      }
+
+      // Buscar cena
+      const scene = await findSceneById(parseInt(sceneId));
+      if (!scene) {
+        socket.emit('distance-error', { message: 'Cena não encontrada' });
+        return;
+      }
+
+      // Calcular distâncias
+      const gridDistance = calculateGridDistance(token1, token2, scene.gridSize);
+      const gameUnits = convertGridToGameUnits(gridDistance, scene.gridSize, unitType);
+
+      const result = {
+        token1: { id: token1.id, name: token1.name, position: { x: token1.x, y: token1.y } },
+        token2: { id: token2.id, name: token2.name, position: { x: token2.x, y: token2.y } },
+        distance: {
+          grid: gridDistance,
+          gameUnits: gameUnits,
+          measurement: `${gameUnits.euclidean} ${gameUnits.unit}`
+        }
+      };
+
+      // Emitir para todos na cena
+      socket.to(`scene-${sceneId}`).emit('distance-measured', {
+        ...result,
+        measuredBy: socket.userId
+      });
+
+      // Confirmar para quem mediu
+      socket.emit('distance-result', result);
+    } catch (error) {
+      socket.emit('distance-error', { message: 'Erro ao medir distância' });
     }
   }
 }
