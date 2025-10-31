@@ -12,6 +12,10 @@ import chatRoutes from "./routes/chatRoutes.js";
 import diceRoutes from "./routes/diceRoutes.js";
 import distanceRoutes from "./routes/distanceRoutes.js";
 import characterSheetRoutes from "./routes/characterSheetRoutes.js";
+import noteRoutes from "./routes/noteRoutes.js";
+import diceMacroRoutes from "./routes/diceMacroRoutes.js";
+import musicRoutes from "./routes/musicRoutes.js";
+import campaignExportRoutes from "./routes/campaignExportRoutes.js";
 
 const app = express();
 
@@ -29,6 +33,10 @@ app.use("/api/chat", chatRoutes);
 app.use("/api/dice", diceRoutes);
 app.use("/api/distance", distanceRoutes);
 app.use("/api/character-sheets", characterSheetRoutes);
+app.use("/api/notes", noteRoutes);
+app.use("/api/dice-macros", diceMacroRoutes);
+app.use("/api/music", musicRoutes);
+app.use("/api/campaigns", campaignExportRoutes);
 
 // Swagger na raiz
 const swaggerOptions = getSwaggerOptions();

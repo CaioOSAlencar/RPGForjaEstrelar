@@ -37,6 +37,22 @@ import diceSchemas from '../schemas/diceSchemas.js';
 // Importar documentação de realtime
 import realtimeRoutes from '../routes/realtimeRoutes.js';
 
+// Importar documentação de notas
+import noteRoutes from '../routes/noteRoutes.js';
+import noteSchemas from '../schemas/noteSchemas.js';
+
+// Importar documentação de macros
+import diceMacroRoutes from '../routes/diceMacroRoutes.js';
+import diceMacroSchemas from '../schemas/diceMacroSchemas.js';
+
+// Importar documentação de música
+import musicRoutes from '../routes/musicRoutes.js';
+import musicSchemas from '../schemas/musicSchemas.js';
+
+// Importar documentação de import/export
+import campaignExportRoutes from '../routes/campaignExportRoutes.js';
+import campaignExportSchemas from '../schemas/campaignExportSchemas.js';
+
 
 
 const getSwaggerOptions = () => ({
@@ -93,6 +109,31 @@ const getSwaggerOptions = () => ({
       { 
         name: '🎲 Dados', 
         description: 'RF20 - Testar rolagem de dados com comandos /roll'
+      },
+      // RF38, RF39, RF40 - Notas e Journal
+      { 
+        name: '📝 Notas', 
+        description: 'RF38, RF39, RF40 - Criar notas com Markdown, handouts e busca'
+      },
+      // RF35 - Macros de Rolagem
+      { 
+        name: '🎲 Macros', 
+        description: 'RF35 - Salvar macros de rolagem na ficha'
+      },
+      // RF28, RF41 - Música de Fundo
+      { 
+        name: '🎵 Música', 
+        description: 'RF28, RF41 - Upload e controle de música de fundo, playlists'
+      },
+      // RF42 - Efeitos Sonoros
+      { 
+        name: '🔊 Efeitos', 
+        description: 'RF42 - Efeitos sonoros rápidos'
+      },
+      // RF26, RF27 - Import/Export
+      { 
+        name: '📦 Import/Export', 
+        description: 'RF26, RF27 - Exportar e importar campanhas em JSON'
       }
     ],
     paths: {
@@ -106,7 +147,11 @@ const getSwaggerOptions = () => ({
       ...distanceRoutes,
       ...characterSheetRoutes,
       ...diceRoutes,
-      ...realtimeRoutes
+      ...realtimeRoutes,
+      ...noteRoutes,
+      ...diceMacroRoutes,
+      ...musicRoutes,
+      ...campaignExportRoutes
     },
     components: {
       schemas: {
@@ -118,6 +163,10 @@ const getSwaggerOptions = () => ({
         ...distanceSchemas,
         ...characterSheetSchemas,
         ...diceSchemas,
+        ...noteSchemas,
+        ...diceMacroSchemas,
+        ...musicSchemas,
+        ...campaignExportSchemas,
         SuccessResponse: {
           type: 'object',
           properties: {
