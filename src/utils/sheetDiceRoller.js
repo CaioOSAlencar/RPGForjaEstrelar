@@ -10,7 +10,7 @@ export const parseSheetDiceExpression = (expression, sheetData) => {
   const cleanExpression = expression.trim().toUpperCase();
   
   // Regex para capturar: XdY+ATTR ou XdY-ATTR ou XdY
-  const diceRegex = /^(\d+)d(\d+)([+-])([A-Z]{3})?$/;
+  const diceRegex = /^(\d+)d(\d+)([+-][A-Z]{3})?$/;
   const match = cleanExpression.match(diceRegex);
   
   if (!match) {
@@ -19,8 +19,14 @@ export const parseSheetDiceExpression = (expression, sheetData) => {
   
   const numDice = parseInt(match[1]);
   const diceSides = parseInt(match[2]);
-  const operator = match[3];
-  const attributeName = match[4];
+  const operatorAndAttr = match[3];
+  let operator = '+';
+  let attributeName = null;
+  
+  if (operatorAndAttr) {
+    operator = operatorAndAttr[0];
+    attributeName = operatorAndAttr.slice(1);
+  }
   
   // Validações básicas
   if (numDice < 1 || numDice > 20) {
