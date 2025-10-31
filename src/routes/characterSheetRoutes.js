@@ -6,7 +6,8 @@ import {
   updateSheet,
   deleteSheet,
   rollDiceFromSheet,
-  getCampaignTemplate
+  getCampaignTemplate,
+  calculateSheetModifiers
 } from '../controllers/characterSheetController.js';
 import { authenticateToken } from '../middlewares/authMiddleware.js';
 
@@ -32,5 +33,8 @@ router.delete('/:sheetId', authenticateToken, deleteSheet);
 
 // RF19 - Rolar dados da ficha
 router.post('/:sheetId/roll', authenticateToken, rollDiceFromSheet);
+
+// RF36 - Calcular modificadores da ficha
+router.get('/:sheetId/modifiers', authenticateToken, calculateSheetModifiers);
 
 export default router;

@@ -47,6 +47,7 @@ class SocketManager {
     socket.on('rotate-token', this.handleRotateToken.bind(this, socket));
     socket.on('resize-token', this.handleResizeToken.bind(this, socket));
     socket.on('update-token-hp', this.handleUpdateTokenHP.bind(this, socket));
+    socket.on('update-token-conditions', this.handleUpdateTokenConditions.bind(this, socket));
     socket.on('measure-distance', this.handleMeasureDistance.bind(this, socket));
     socket.on('disconnect', this.handleDisconnect.bind(this, socket));
   }
@@ -327,6 +328,24 @@ class SocketManager {
       }
     } catch (error) {
       socket.emit('error', { message: 'Erro ao atualizar HP do token' });
+    }
+  }
+
+  // RF37 - Atualizar condições do token em tempo real
+  async handleUpdateTokenConditions(socket, { tokenId, conditions, sceneId }) {
+    try {
+      const updatedToken = await tokenRepository.updateToken(tokenId, { 
+        conditions: JSON.stringify(conditions) 
+      });
+      if (updatedToken) {
+        socket.to(`scene-${sceneId}`).emit('token-conditions-updated', {
+          tokenId, 
+          conditions, 
+          updatedBy: socket.userId
+        });
+      }
+    } catch (error) {
+      socket.emit('error', { message: 'Erro ao atualizar condições do token' });
     }
   }
 

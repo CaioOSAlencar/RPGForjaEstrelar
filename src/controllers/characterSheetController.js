@@ -10,6 +10,7 @@ import { findCampaignById } from '../repositories/campaignRepository.js';
 import { sendResponse, sendError } from '../utils/messages.js';
 import { rollSheetDice } from '../utils/sheetDiceRoller.js';
 import { getTemplateForSystem } from '../utils/sheetTemplates.js';
+import { addModifiersToSheet } from '../utils/modifierCalculator.js';
 import asyncHandler from 'express-async-handler';
 
 // RF18 - Criar ficha de personagem
@@ -113,7 +114,50 @@ export const getSheetById = asyncHandler(async (req, res) => {
     return sendError(res, 403, 'Você não tem permissão para ver esta ficha');
   }
 
-  return sendResponse(res, 200, { data: sheet, message: 'Ficha encontrada' });
+  // RF36 - Adicionar modificadores calculados
+  const sheetWithModifiers = {
+    ...sheet,
+    data: JSON.stringify(addModifiersToSheet(JSON.parse(sheet.data), sheet.campaign.system))
+  };
+
+  return sendResponse(res, 200, { data: sheetWithModifiers, message: 'Ficha encontrada' });
+});
+
+// RF36 - Calcular modificadores da ficha
+export const calculateSheetModifiers = asyncHandler(async (req, res) => {
+  const { sheetId } = req.params;
+  const userId = req.user.id;
+
+  const sheet = await findSheetById(parseInt(sheetId));
+  if (!sheet) {
+    return sendError(res, 404, 'Ficha não encontrada');
+  }
+
+  // Verificar permissões: dono da ficha ou mestre da campanha
+  if (sheet.userId !== userId && sheet.campaign.masterId !== userId) {
+    return sendError(res, 403, 'Você não tem permissão para ver esta ficha');
+  }
+
+  try {
+    const sheetData = JSON.parse(sheet.data);
+    const sheetWithModifiers = addModifiersToSheet(sheetData, sheet.campaign.system);
+    
+    const result = {
+      sheet: {
+        id: sheet.id,
+        name: sheet.name,
+        class: sheet.class,
+        level: sheet.level,
+        system: sheet.campaign.system
+      },
+      attributes: sheetWithModifiers.attributes,
+      modifiers: sheetWithModifiers.modifiers
+    };
+
+    return sendResponse(res, 200, { data: result, message: 'Modificadores calculados com sucesso!' });
+  } catch (error) {
+    return sendError(res, 400, 'Erro ao processar dados da ficha');
+  }
 });
 
 // Atualizar ficha

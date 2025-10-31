@@ -90,8 +90,8 @@
 
 ---
 
-## 📋 SPRINT 5 - FICHAS DE PERSONAGEM
-**Duração:** 2 semanas | **Status:** ⏸️ Aguardando
+## ✅ SPRINT 5 - FICHAS DE PERSONAGEM
+**Duração:** 2 semanas | **Status:** ✅ Completa
 
 | ID | Descrição | Prioridade | Status | Estimativa |
 |----|-----------|------------|--------|------------|
@@ -99,9 +99,9 @@
 | RF19 | Rolar dados da ficha (1d20 + FOR) | Alta | ✅ Concluído | 4h |
 | RF16 | Vincular token à ficha de personagem | Alta | ✅ Concluído | 3h |
 | RF17 | Barra de HP nos tokens em tempo real | Alta | ✅ Concluído | 4h |
-| RF36 | Calcular modificadores automaticamente | Alta | ⏸️ Bloqueado | 5h |
-| RF37 | Exibir condições nos tokens | Média | ⏸️ Bloqueado | 3h |
-| RF44 | Mestre editar qualquer ficha | Alta | ⏸️ Bloqueado | 2h |
+| RF36 | Calcular modificadores automaticamente | Alta | ✅ Concluído | 5h |
+| RF37 | Exibir condições nos tokens | Média | ✅ Concluído | 3h |
+| RF44 | Mestre editar qualquer ficha | Alta | ✅ Concluído | 2h |
 
 **Dependências:** Sprint 4 completa
 
@@ -177,23 +177,23 @@
 - **Sprint 2:** 5/5 (100%) - ✅ Completa
 - **Sprint 3:** 7/7 (100%) - ✅ Completa
 - **Sprint 4:** 6/6 (100%) - ✅ Completa
-- **Sprint 5:** 0/7 (0%)
+- **Sprint 5:** 7/7 (100%) - ✅ Completa
 - **Sprint 6:** 0/4 (0%)
 - **Sprint 7:** 0/3 (0%)
 - **Sprint 8:** 0/8 (0%)
 
 ### Geral
-- **Concluído:** 24/45 (53%)
+- **Concluído:** 31/45 (69%)
 - **Em Andamento:** 0/45 (0%)
-- **Pendente:** 21/45 (47%)
+- **Pendente:** 14/45 (31%)
 
 ---
 
 ## 🎯 PRÓXIMOS PASSOS
 
-1. **Agora:** Iniciar Sprint 4 - Chat e Sistema de Dados
-2. **Depois:** RF23 - Chat em tempo real
-3. **Em seguida:** RF20 - Rolagem de dados
+1. **Agora:** Iniciar Sprint 6 - Interface e UX
+2. **Depois:** RF29 - Tema claro/escuro
+3. **Em seguida:** RF30 - Interface responsiva
 
 **Comando para continuar:**
 ```bash
@@ -212,29 +212,39 @@ npm run dev
 - **Utils:** Helpers padronizados ✅
 - **Próximo:** Sistema de mapas e tokens
 
-**Última atualização:** Sprint 3 completa - Iniciando Sprint 4
+**Última atualização:** Sprint 5 completa - Iniciando Sprint 6
 
 ---
 
 ## 🏆 CONQUISTAS RECENTES
 
-### Sprint 3 - Mapas e Cenas Básicas (100% Completa)
-- ✅ **RF11** - Criar cenas com upload de imagem de fundo
-- ✅ **RF12** - Configurar grid (tamanho, cor, snap)
-- ✅ **RF13** - Upload de tokens com imagens, nome, HP e posicionamento
-- ✅ **RF14** - Movimentação de tokens em tempo real via WebSocket
-- ✅ **RF15** - Rotação e redimensionamento de tokens
-- ✅ **RF34** - Salvamento automático de posições em tempo real
-- ✅ **RF45** - Mestre deletar cenas e tokens
+### Sprint 5 - Fichas de Personagem (100% Completa)
+- ✅ **RF18** - Criar fichas com atributos em JSON
+- ✅ **RF19** - Rolar dados da ficha com modificadores de atributos
+- ✅ **RF16** - Vincular token à ficha de personagem
+- ✅ **RF17** - Barra de HP nos tokens em tempo real
+- ✅ **RF36** - Calcular modificadores automaticamente
+- ✅ **RF37** - Exibir condições nos tokens
+- ✅ **RF44** - Mestre editar qualquer ficha de personagem
+
+### Sprint 4 - Chat e Sistema de Dados (100% Completa)
+- ✅ **RF23** - Chat em tempo real com timestamp
+- ✅ **RF20** - Rolagem de dados no chat (/roll 2d6+3)
+- ✅ **RF21** - Rolagens privadas (/w gm 1d20)
+- ✅ **RF22** - Histórico de rolagens com animação
+- ✅ **RF24** - Suporte a emotes (/me ataca)
+- ✅ **RF25** - Medir distância entre tokens
 
 ### Funcionalidades Implementadas
-- 🔐 **Autenticação JWT** completa
-- 🏰 **Gerenciamento de campanhas** robusto
-- 📧 **Sistema de convites** por email/link
-- 👥 **Controle de jogadores** pelo mestre
+- 🔐 **Autenticação JWT** completa com validações rigorosas
+- 🏰 **Gerenciamento de campanhas** robusto com convites e permissões
 - 🗺️ **Sistema completo de cenas** com upload de mapas e grid configurável
 - 🎭 **Sistema completo de tokens** com upload, CRUD e tempo real
+- 💬 **Chat em tempo real** com dados, emotes e histórico
+- 🎲 **Sistema de dados** com rolagens públicas/privadas e modificações
+- 📋 **Fichas de personagem** flexíveis com JSON e cálculos automáticos
+- 📊 **Barras de HP** e condições em tempo real nos tokens
+- 📏 **Medição de distância** baseada no grid
 - ⚡ **WebSocket (Socket.io)** para sincronização em tempo real
-- 🗑️ **Sistema de deleção** para cenas e tokens
-- 📚 **Documentação Swagger** 100% atualizada
-- 🛠️ **Arquitetura limpa** com utils padronizados
+- 📚 **Documentação Swagger** 100% completa e atualizada
+- 🛠️ **Arquitetura limpa** com utils padronizados e validações

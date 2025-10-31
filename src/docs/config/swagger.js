@@ -30,6 +30,13 @@ import distanceSchemas from '../schemas/distanceSchemas.js';
 import characterSheetRoutes from '../routes/characterSheetRoutes.js';
 import characterSheetSchemas from '../schemas/characterSheetSchemas.js';
 
+// Importar documentação de dados
+import diceRoutes from '../routes/diceRoutes.js';
+import diceSchemas from '../schemas/diceSchemas.js';
+
+// Importar documentação de realtime
+import realtimeRoutes from '../routes/realtimeRoutes.js';
+
 
 
 const getSwaggerOptions = () => ({
@@ -81,6 +88,11 @@ const getSwaggerOptions = () => ({
       { 
         name: '📋 Fichas', 
         description: 'RF18, RF19 - Criar fichas com atributos JSON, rolar dados da ficha'
+      },
+      // RF20 - Rolagem de Dados
+      { 
+        name: '🎲 Dados', 
+        description: 'RF20 - Testar rolagem de dados com comandos /roll'
       }
     ],
     paths: {
@@ -92,7 +104,9 @@ const getSwaggerOptions = () => ({
       ...tokenRoutes,
       ...chatRoutes,
       ...distanceRoutes,
-      ...characterSheetRoutes
+      ...characterSheetRoutes,
+      ...diceRoutes,
+      ...realtimeRoutes
     },
     components: {
       schemas: {
@@ -102,13 +116,75 @@ const getSwaggerOptions = () => ({
         ...tokenSchemas,
         ...chatSchemas,
         ...distanceSchemas,
-        ...characterSheetSchemas
+        ...characterSheetSchemas,
+        ...diceSchemas,
+        SuccessResponse: {
+          type: 'object',
+          properties: {
+            success: { type: 'boolean', example: true },
+            message: { type: 'string', example: 'Operação realizada com sucesso' }
+          }
+        },
+        ErrorResponse: {
+          type: 'object',
+          properties: {
+            success: { type: 'boolean', example: false },
+            message: { type: 'string', example: 'Erro na operação' },
+            errors: {
+              type: 'array',
+              items: { type: 'string' },
+              example: ['Detalhes do erro']
+            }
+          }
+        }
       },
       securitySchemes: {
         bearerAuth: {
           type: 'http',
           scheme: 'bearer',
           bearerFormat: 'JWT'
+        }
+      },
+      responses: {
+        BadRequest: {
+          description: 'Dados inválidos',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+            }
+          }
+        },
+        Unauthorized: {
+          description: 'Token inválido ou ausente',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+            }
+          }
+        },
+        Forbidden: {
+          description: 'Sem permissão para esta ação',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+            }
+          }
+        },
+        NotFound: {
+          description: 'Recurso não encontrado',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+            }
+          }
+        },
+        InternalError: {
+          description: 'Erro interno do servidor',
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+            }
+          }
         }
       }
     }
