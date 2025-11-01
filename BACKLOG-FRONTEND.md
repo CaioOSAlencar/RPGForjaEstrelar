@@ -9,46 +9,55 @@
 ---
 
 ## 🔐 SPRINT F1 - AUTENTICAÇÃO E NAVEGAÇÃO
-**Duração:** 2 semanas | **Status:** 🔄 Em Andamento
+**Duração:** 2 semanas | **Status:** ✅ Completa
 
 | ID | Tela/Componente | Prioridade | Status | Estimativa |
 |----|-----------------|------------|--------|------------|
 | F01 | Tela de Login | Alta | ✅ Concluído | 8h |
 | F02 | Tela de Cadastro | Alta | ✅ Concluído | 8h |
-| F03 | Layout Principal (Header/Sidebar) | Alta | ⏸️ Pendente | 12h |
+| F03 | Layout Principal (Header/Sidebar) | Alta | ✅ Concluído | 12h |
 | F04 | Tela Home/Dashboard | Alta | ✅ Concluído | 10h |
-| F05 | Perfil do Usuário | Média | ⏸️ Pendente | 6h |
+| F05 | Perfil do Usuário | Média | ✅ Concluído | 6h |
 | F06 | Sistema de Rotas Protegidas | Alta | ✅ Concluído | 4h |
 | F07 | Context de Autenticação | Alta | ✅ Concluído | 6h |
+| **EXTRA** | **RPG Header com Navegação** | **Alta** | **✅ Concluído** | **4h** |
+| **EXTRA** | **Tratamento de Erros Melhorado** | **Média** | **✅ Concluído** | **2h** |
 
 **Entregáveis:**
 - ✅ Configuração inicial React + Vite + Tailwind
 - ✅ Sistema de autenticação completo
-- ⏸️ Layout responsivo base
+- ✅ Layout responsivo base (RPG Header)
 - ✅ Navegação entre telas
 - ✅ Gerenciamento de estado global
+- ✅ Tratamento específico de erros
+- ✅ Interface RPG consistente
 
 ---
 
 ## 🏰 SPRINT F2 - CAMPANHAS E CONVITES
-**Duração:** 2 semanas | **Status:** ⏸️ Pendente
+**Duração:** 2 semanas | **Status:** ✅ Completa
 
 | ID | Tela/Componente | Prioridade | Status | Estimativa |
 |----|-----------------|------------|--------|------------|
-| F08 | Lista de Campanhas | Alta | ⏸️ Pendente | 8h |
-| F09 | Criar Nova Campanha | Alta | ⏸️ Pendente | 10h |
-| F10 | Detalhes da Campanha | Alta | ⏸️ Pendente | 12h |
-| F11 | Sistema de Convites | Alta | ⏸️ Pendente | 14h |
-| F12 | Aceitar Convite | Alta | ⏸️ Pendente | 6h |
-| F13 | Gerenciar Jogadores | Alta | ⏸️ Pendente | 8h |
-| F14 | Modal de Confirmações | Média | ⏸️ Pendente | 4h |
+| F08 | Lista de Campanhas | Alta | ✅ Concluído | 8h |
+| F09 | Criar Nova Campanha | Alta | ✅ Concluído | 10h |
+| F10 | Detalhes da Campanha | Alta | ✅ Concluído | 12h |
+| F11 | Sistema de Convites | Alta | ✅ Concluído | 14h |
+| F12 | Aceitar Convite | Alta | ✅ Concluído | 6h |
+| F13 | Gerenciar Jogadores | Alta | ✅ Concluído | 8h |
+| F14 | Modal de Confirmações | Média | ✅ Concluído | 4h |
+| **EXTRA** | **Serviço de Campanhas** | **Alta** | **✅ Concluído** | **4h** |
+| **EXTRA** | **Entrar por Código** | **Alta** | **✅ Concluído** | **3h** |
+| **EXTRA** | **Modal Reutilizável** | **Média** | **✅ Concluído** | **2h** |
 
 **Entregáveis:**
-- ⏸️ CRUD completo de campanhas
-- ⏸️ Sistema de convites por email/link
-- ⏸️ Interface de gerenciamento
-- ⏸️ Validações de formulário
-- ⏸️ Feedback visual (toasts/modals)
+- ✅ CRUD completo de campanhas
+- ✅ Sistema de convites por email/link
+- ✅ Interface de gerenciamento completa
+- ✅ Validações de formulário
+- ✅ Feedback visual (toasts/modals)
+- ✅ Gerenciamento de jogadores
+- ✅ Componentes reutilizáveis
 
 ---
 
@@ -210,8 +219,8 @@
 ## 📈 MÉTRICAS DE PROGRESSO
 
 ### Por Sprint Frontend
-- **Sprint F1:** 5/7 (71%) - Autenticação (em andamento)
-- **Sprint F2:** 0/7 (0%) - Campanhas
+- **Sprint F1:** 9/9 (100%) - ✅ Completa
+- **Sprint F2:** 10/10 (100%) - ✅ Completa
 - **Sprint F3:** 0/7 (0%) - Mapas
 - **Sprint F4:** 0/8 (0%) - Tokens
 - **Sprint F5:** 0/7 (0%) - Chat
@@ -220,30 +229,37 @@
 - **Sprint F8:** 0/9 (0%) - Mídia
 
 ### Geral Frontend
-- **Total de Telas:** 59 componentes
-- **Concluído:** 5/59 (8%)
-- **Em Andamento:** 2/59 (3%)
-- **Pendente:** 52/59 (88%)
-- **Estimativa Total:** ~500 horas
+- **Total de Telas:** 64 componentes (incluindo extras)
+- **Concluído:** 19/64 (30%)
+- **Em Andamento:** 0/64 (0%)
+- **Pendente:** 45/64 (70%)
+- **Estimativa Total:** ~515 horas
 
 ---
 
 ## 🎯 PRÓXIMOS PASSOS FRONTEND
 
-1. **Finalizar Sprint F1** ✅ 71% completo
-   - ✅ Telas de login/cadastro
-   - ⏸️ Layout principal com sidebar
-   - ⏸️ Perfil do usuário
+1. **Sprint F1** ✅ 100% Completa!
+   - ✅ Telas de login/cadastro com tratamento de erros
+   - ✅ RPG Header com navegação
+   - ✅ Perfil do usuário com abas
    - ✅ Sistema de rotas protegidas
+   - ✅ Dashboard temático
 
-2. **Sprint F2 - Campanhas** (próximo)
-   - CRUD de campanhas
-   - Sistema de convites
-   - Interface de gerenciamento
+2. **Sprint F2 - Campanhas** ✅ 100% Completa!
+   - ✅ Lista de campanhas com navegação
+   - ✅ Criar nova campanha com validações
+   - ✅ Detalhes da campanha com abas
+   - ✅ Sistema completo de convites (email + token)
+   - ✅ Gerenciar jogadores com remoção
+   - ✅ Entrar por código de campanha
+   - ✅ Modais de confirmação reutilizáveis
 
-3. **Sprint F3 - Mapas**
-   - Canvas interativo
-   - Upload de imagens
+3. **Sprint F3 - Mapas** (próximo)
+   - Canvas interativo para mapas
+   - Upload de imagens de fundo
+   - Sistema de grid configurável
+   - Controles de zoom e panoad de imagens
    - Sistema de grid
 
 ---
