@@ -9,24 +9,24 @@
 ---
 
 ## 🔐 SPRINT F1 - AUTENTICAÇÃO E NAVEGAÇÃO
-**Duração:** 2 semanas | **Status:** ⏸️ Pendente
+**Duração:** 2 semanas | **Status:** 🔄 Em Andamento
 
 | ID | Tela/Componente | Prioridade | Status | Estimativa |
 |----|-----------------|------------|--------|------------|
-| F01 | Tela de Login | Alta | ⏸️ Pendente | 8h |
-| F02 | Tela de Cadastro | Alta | ⏸️ Pendente | 8h |
+| F01 | Tela de Login | Alta | ✅ Concluído | 8h |
+| F02 | Tela de Cadastro | Alta | ✅ Concluído | 8h |
 | F03 | Layout Principal (Header/Sidebar) | Alta | ⏸️ Pendente | 12h |
-| F04 | Tela Home/Dashboard | Alta | ⏸️ Pendente | 10h |
+| F04 | Tela Home/Dashboard | Alta | ✅ Concluído | 10h |
 | F05 | Perfil do Usuário | Média | ⏸️ Pendente | 6h |
-| F06 | Sistema de Rotas Protegidas | Alta | ⏸️ Pendente | 4h |
-| F07 | Context de Autenticação | Alta | ⏸️ Pendente | 6h |
+| F06 | Sistema de Rotas Protegidas | Alta | ✅ Concluído | 4h |
+| F07 | Context de Autenticação | Alta | ✅ Concluído | 6h |
 
 **Entregáveis:**
-- ⏸️ Configuração inicial React + Vite + Tailwind
-- ⏸️ Sistema de autenticação completo
+- ✅ Configuração inicial React + Vite + Tailwind
+- ✅ Sistema de autenticação completo
 - ⏸️ Layout responsivo base
-- ⏸️ Navegação entre telas
-- ⏸️ Gerenciamento de estado global
+- ✅ Navegação entre telas
+- ✅ Gerenciamento de estado global
 
 ---
 
@@ -210,7 +210,7 @@
 ## 📈 MÉTRICAS DE PROGRESSO
 
 ### Por Sprint Frontend
-- **Sprint F1:** 0/7 (0%) - Autenticação
+- **Sprint F1:** 5/7 (71%) - Autenticação (em andamento)
 - **Sprint F2:** 0/7 (0%) - Campanhas
 - **Sprint F3:** 0/7 (0%) - Mapas
 - **Sprint F4:** 0/8 (0%) - Tokens
@@ -221,29 +221,30 @@
 
 ### Geral Frontend
 - **Total de Telas:** 59 componentes
-- **Concluído:** 0/59 (0%)
-- **Pendente:** 59/59 (100%)
+- **Concluído:** 5/59 (8%)
+- **Em Andamento:** 2/59 (3%)
+- **Pendente:** 52/59 (88%)
 - **Estimativa Total:** ~500 horas
 
 ---
 
 ## 🎯 PRÓXIMOS PASSOS FRONTEND
 
-1. **Configurar Projeto React**
-   - Vite + React + TypeScript
-   - Tailwind CSS + Headless UI
-   - React Router + Context API
-   - Axios + Socket.io Client
+1. **Finalizar Sprint F1** ✅ 71% completo
+   - ✅ Telas de login/cadastro
+   - ⏸️ Layout principal com sidebar
+   - ⏸️ Perfil do usuário
+   - ✅ Sistema de rotas protegidas
 
-2. **Sprint F1 - Autenticação**
-   - Telas de login/cadastro
-   - Layout base responsivo
-   - Sistema de rotas protegidas
-
-3. **Sprint F2 - Campanhas**
+2. **Sprint F2 - Campanhas** (próximo)
    - CRUD de campanhas
    - Sistema de convites
    - Interface de gerenciamento
+
+3. **Sprint F3 - Mapas**
+   - Canvas interativo
+   - Upload de imagens
+   - Sistema de grid
 
 ---
 
