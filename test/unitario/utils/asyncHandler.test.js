@@ -12,26 +12,37 @@ describe('asyncHandler', () => {
     expect(typeof result).toBe('function');
   });
 
-  test('deve executar função sem erro', async () => {
+  test('deve executar função assíncrona com sucesso', async () => {
     let called = false;
-    const mockFn = async () => { called = true; };
+    const mockFn = async (req, res) => { 
+      called = true;
+      return res;
+    };
     const wrappedFn = asyncHandler(mockFn);
+    const mockReq = {};
+    const mockRes = { status: () => mockRes, json: () => mockRes };
     const mockNext = () => {};
 
-    await wrappedFn({}, {}, mockNext);
+    await wrappedFn(mockReq, mockRes, mockNext);
 
     expect(called).toBe(true);
   });
 
-  test('deve capturar erro', async () => {
-    const error = new Error('Test error');
-    const mockFn = async () => { throw error; };
+  test('deve chamar ResponseHelper em caso de erro', async () => {
+    const mockFn = async () => { 
+      throw new Error('Test error'); 
+    };
     const wrappedFn = asyncHandler(mockFn);
-    let capturedError = null;
-    const mockNext = (err) => { capturedError = err; };
+    const mockReq = {};
+    let errorCaptured = false;
+    const mockRes = { 
+      status: () => mockRes, 
+      json: () => { errorCaptured = true; return mockRes; }
+    };
+    const mockNext = () => {};
 
-    await wrappedFn({}, {}, mockNext);
+    await wrappedFn(mockReq, mockRes, mockNext);
 
-    expect(capturedError).toBe(error);
+    expect(errorCaptured).toBe(true);
   });
 });

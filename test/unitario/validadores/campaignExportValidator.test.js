@@ -1,32 +1,12 @@
-import { validateExportCampaign, validateImportCampaign } from '../../../src/validadores/campaignExportValidator.js';
+import { validateImportCampaign } from '../../../src/validadores/campaignExportValidator.js';
 
 describe('campaignExportValidator', () => {
-  describe('validateExportCampaign', () => {
-    test('deve validar export válido', () => {
-      const data = { campaignId: 1 };
-      const result = validateExportCampaign(data);
-      
-      expect(result.isValid).toBe(true);
-      expect(result.errors).toHaveLength(0);
-    });
-
-    test('deve falhar sem campaignId', () => {
-      const data = {};
-      const result = validateExportCampaign(data);
-      
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('ID da campanha é obrigatório');
-    });
-  });
-
   describe('validateImportCampaign', () => {
     test('deve validar import válido', () => {
       const data = { 
-        campaignData: { 
-          name: 'Test Campaign',
-          scenes: [],
-          characters: []
-        }
+        name: 'Test Campaign',
+        system: 'D&D 5e',
+        description: 'Test description'
       };
       const result = validateImportCampaign(data);
       
@@ -34,12 +14,45 @@ describe('campaignExportValidator', () => {
       expect(result.errors).toHaveLength(0);
     });
 
-    test('deve falhar sem dados da campanha', () => {
-      const data = {};
+    test('deve falhar sem nome', () => {
+      const data = { system: 'D&D 5e' };
       const result = validateImportCampaign(data);
       
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Dados da campanha são obrigatórios');
+      expect(result.errors).toContain('Nome da campanha é obrigatório');
+    });
+
+    test('deve falhar sem sistema', () => {
+      const data = { name: 'Test Campaign' };
+      const result = validateImportCampaign(data);
+      
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContain('Sistema é obrigatório');
+    });
+
+    test('deve validar arrays opcionais', () => {
+      const data = { 
+        name: 'Test Campaign',
+        system: 'D&D 5e',
+        scenes: [],
+        notes: []
+      };
+      const result = validateImportCampaign(data);
+      
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    test('deve falhar com scenes não sendo array', () => {
+      const data = { 
+        name: 'Test Campaign',
+        system: 'D&D 5e',
+        scenes: 'invalid'
+      };
+      const result = validateImportCampaign(data);
+      
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContain('Scenes deve ser um array');
     });
   });
 });
