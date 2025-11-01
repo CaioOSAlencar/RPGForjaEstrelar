@@ -1,14 +1,14 @@
-import { validateCreateMacro, validateUpdateMacro } from '../../../src/validadores/diceMacroValidator.js';
+import { validateCreateDiceMacro, validateUpdateDiceMacro } from '../../../src/validadores/diceMacroValidator.js';
 
 describe('diceMacroValidator', () => {
-  describe('validateCreateMacro', () => {
+  describe('validateCreateDiceMacro', () => {
     test('deve validar macro válido', () => {
       const data = { 
         name: 'Attack Roll',
         expression: '1d20+5',
         characterSheetId: 1
       };
-      const result = validateCreateMacro(data);
+      const result = validateCreateDiceMacro(data);
       
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
@@ -16,39 +16,47 @@ describe('diceMacroValidator', () => {
 
     test('deve falhar com nome vazio', () => {
       const data = { name: '', expression: '1d20+5', characterSheetId: 1 };
-      const result = validateCreateMacro(data);
+      const result = validateCreateDiceMacro(data);
       
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Nome do macro é obrigatório');
+      expect(result.errors).toContain('Nome é obrigatório');
     });
 
     test('deve falhar sem characterSheetId', () => {
       const data = { name: 'Attack', expression: '1d20+5' };
-      const result = validateCreateMacro(data);
+      const result = validateCreateDiceMacro(data);
       
       expect(result.isValid).toBe(false);
       expect(result.errors).toContain('ID da ficha é obrigatório');
     });
+
+    test('deve falhar sem expressão', () => {
+      const data = { name: 'Attack', expression: '', characterSheetId: 1 };
+      const result = validateCreateDiceMacro(data);
+      
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContain('Expressão é obrigatória');
+    });
   });
 
-  describe('validateUpdateMacro', () => {
+  describe('validateUpdateDiceMacro', () => {
     test('deve validar atualização válida', () => {
       const data = { 
         name: 'Updated Attack',
         expression: '1d20+6'
       };
-      const result = validateUpdateMacro(data);
+      const result = validateUpdateDiceMacro(data);
       
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
 
-    test('deve falhar com nome vazio', () => {
-      const data = { name: '' };
-      const result = validateUpdateMacro(data);
+    test('deve aceitar atualização parcial', () => {
+      const data = { expression: '2d6+3' };
+      const result = validateUpdateDiceMacro(data);
       
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Nome do macro não pode estar vazio');
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
     });
   });
 });

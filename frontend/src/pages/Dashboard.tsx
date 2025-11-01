@@ -1,9 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import RPGBackground from '../components/RPGBackground';
 import RPGHeader from '../components/RPGHeader';
 
 const Dashboard: React.FC = () => {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const navigate = useNavigate();
 
   return (
     <div className="dashboard-container">
@@ -29,9 +31,13 @@ const Dashboard: React.FC = () => {
           </p>
           
           <div className="dashboard-grid">
-            <div className="dashboard-card">
+            <div 
+              className="dashboard-card"
+              onClick={() => navigate('/campaigns')}
+              style={{ cursor: 'pointer', opacity: 1 }}
+            >
               <h3 style={{ fontFamily: 'Cinzel, serif', color: '#D4AF37', marginBottom: '0.5rem' }}>📜 Campanhas</h3>
-              <p style={{ fontSize: '0.9rem', color: 'rgba(212, 175, 55, 0.6)' }}>Em breve...</p>
+              <p style={{ fontSize: '0.9rem', color: 'rgba(212, 175, 55, 0.8)' }}>Clique para acessar</p>
             </div>
             
             <div className="dashboard-card">

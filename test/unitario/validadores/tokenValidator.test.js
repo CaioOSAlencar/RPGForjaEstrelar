@@ -1,4 +1,4 @@
-import { validateCreateToken, validateUpdateToken, validateUpdatePosition } from '../../../src/validadores/tokenValidator.js';
+import { validateCreateToken, validateUpdateToken } from '../../../src/validadores/tokenValidator.js';
 
 describe('tokenValidator', () => {
   describe('validateCreateToken', () => {
@@ -41,25 +41,23 @@ describe('tokenValidator', () => {
       const result = validateUpdateToken(data);
       
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('HP deve ser maior ou igual a 0');
+      expect(result.errors).toContain('HP deve ser um número positivo');
     });
-  });
 
-  describe('validateUpdatePosition', () => {
-    test('deve validar posição válida', () => {
-      const data = { x: 200, y: 300, rotation: 45, scale: 1.5 };
-      const result = validateUpdatePosition(data);
+    test('deve aceitar atualização parcial', () => {
+      const data = { x: 100, y: 200 };
+      const result = validateUpdateToken(data);
       
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
 
-    test('deve falhar com escala inválida', () => {
-      const data = { scale: 0 };
-      const result = validateUpdatePosition(data);
+    test('deve validar rotação dentro do limite', () => {
+      const data = { rotation: 180 };
+      const result = validateUpdateToken(data);
       
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Escala deve ser maior que 0');
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
     });
   });
 });

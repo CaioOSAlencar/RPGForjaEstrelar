@@ -4,6 +4,10 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
+import Campaigns from './pages/Campaigns';
+import JoinCampaign from './pages/JoinCampaign';
+import CampaignDetails from './pages/CampaignDetails';
+import AcceptInvite from './pages/AcceptInvite';
 import { authService } from './services/auth';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -49,6 +53,38 @@ function App() {
             element={
               <ProtectedRoute>
                 <Profile />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/campaigns" 
+            element={
+              <ProtectedRoute>
+                <Campaigns />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/campaigns/join" 
+            element={
+              <ProtectedRoute>
+                <JoinCampaign />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/campaigns/:id" 
+            element={
+              <ProtectedRoute>
+                <CampaignDetails />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/invite/:token" 
+            element={
+              <ProtectedRoute>
+                <AcceptInvite />
               </ProtectedRoute>
             } 
           />
