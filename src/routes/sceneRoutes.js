@@ -23,6 +23,9 @@ router.get('/:sceneId', authenticateToken, getSceneDetails);
 // RF12 - Atualizar configurações da cena (rota protegida)
 router.put('/:sceneId', authenticateToken, updateSceneSettings);
 
+// Upload de background da cena (rota protegida)
+router.post('/:sceneId/background', authenticateToken, uploadScene, updateSceneSettings);
+
 // RF45 - Deletar cena (rota protegida)
 router.delete('/:sceneId', authenticateToken, deleteSceneById);
 
