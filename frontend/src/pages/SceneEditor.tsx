@@ -636,8 +636,8 @@ const SceneEditor: React.FC = () => {
                 border: '3px solid #d4af37',
                 borderRadius: '12px',
                 overflow: 'hidden',
-                width: Math.min(formData.width * 0.4, 600),
-                height: Math.min(formData.height * 0.4, 400),
+                width: Math.min((formData.width || 1920) * 0.4, 600),
+                height: Math.min((formData.height || 1080) * 0.4, 400),
                 backgroundImage: scene.backgroundImage ? `url(${scene.backgroundImage})` : 'linear-gradient(45deg, rgba(212, 175, 55, 0.1) 25%, transparent 25%), linear-gradient(-45deg, rgba(212, 175, 55, 0.1) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(212, 175, 55, 0.1) 75%), linear-gradient(-45deg, transparent 75%, rgba(212, 175, 55, 0.1) 75%)',
                 backgroundSize: scene.backgroundImage ? 'cover' : '20px 20px',
                 backgroundPosition: scene.backgroundImage ? 'center' : '0 0, 0 10px, 10px -10px, -10px 0px',
@@ -659,14 +659,14 @@ const SceneEditor: React.FC = () => {
                   <defs>
                     <pattern
                       id="grid"
-                      width={formData.gridSize * 0.4}
-                      height={formData.gridSize * 0.4}
+                      width={(formData.gridSize || 50) * 0.4}
+                      height={(formData.gridSize || 50) * 0.4}
                       patternUnits="userSpaceOnUse"
                     >
                       <path
-                        d={`M ${formData.gridSize * 0.4} 0 L 0 0 0 ${formData.gridSize * 0.4}`}
+                        d={`M ${(formData.gridSize || 50) * 0.4} 0 L 0 0 0 ${(formData.gridSize || 50) * 0.4}`}
                         fill="none"
-                        stroke={formData.gridColor}
+                        stroke={formData.gridColor || '#ffffff'}
                         strokeWidth="1"
                       />
                     </pattern>
