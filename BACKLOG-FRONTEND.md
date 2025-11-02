@@ -62,24 +62,24 @@
 ---
 
 ## 🗺️ SPRINT F3 - MAPAS E CENAS
-**Duração:** 3 semanas | **Status:** ⏸️ Pendente
+**Duração:** 3 semanas | **Status:** ✅ Completa
 
 | ID | Tela/Componente | Prioridade | Status | Estimativa |
 |----|-----------------|------------|--------|------------|
-| F15 | Lista de Cenas | Alta | ⏸️ Pendente | 8h |
-| F16 | Criar/Editar Cena | Alta | ⏸️ Pendente | 12h |
-| F17 | Upload de Imagem de Fundo | Alta | ⏸️ Pendente | 10h |
-| F18 | Configurador de Grid | Alta | ⏸️ Pendente | 14h |
-| F19 | Visualizador de Mapa | Alta | ⏸️ Pendente | 20h |
-| F20 | Sistema de Zoom/Pan | Média | ⏸️ Pendente | 8h |
-| F21 | Toolbar de Ferramentas | Média | ⏸️ Pendente | 6h |
+| F15 | Lista de Cenas | Alta | ✅ Concluído | 8h |
+| F16 | Criar/Editar Cena | Alta | ✅ Concluído | 12h |
+| F17 | Upload de Imagem de Fundo | Alta | ✅ Concluído | 10h |
+| F18 | Configurador de Grid | Alta | ✅ Concluído | 14h |
+| F19 | Visualizador de Mapa | Alta | ✅ Concluído | 20h |
+| F20 | Sistema de Zoom/Pan | Média | ✅ Concluído | 8h |
+| F21 | Toolbar de Ferramentas | Média | ✅ Concluído | 6h |
 
 **Entregáveis:**
-- ⏸️ Interface completa de cenas
-- ⏸️ Upload e preview de imagens
-- ⏸️ Canvas interativo para mapas
-- ⏸️ Configurações de grid visuais
-- ⏸️ Controles de navegação
+- ✅ Interface completa de cenas
+- ✅ Upload e preview de imagens
+- ✅ Canvas interativo para mapas
+- ✅ Configurações de grid visuais
+- ✅ Controles de navegação
 
 ---
 
@@ -221,7 +221,7 @@
 ### Por Sprint Frontend
 - **Sprint F1:** 9/9 (100%) - ✅ Completa
 - **Sprint F2:** 10/10 (100%) - ✅ Completa
-- **Sprint F3:** 0/7 (0%) - Mapas
+- **Sprint F3:** 7/7 (100%) - ✅ Completa
 - **Sprint F4:** 0/8 (0%) - Tokens
 - **Sprint F5:** 0/7 (0%) - Chat
 - **Sprint F6:** 0/8 (0%) - Fichas
@@ -230,9 +230,9 @@
 
 ### Geral Frontend
 - **Total de Telas:** 64 componentes (incluindo extras)
-- **Concluído:** 19/64 (30%)
+- **Concluído:** 26/64 (41%)
 - **Em Andamento:** 0/64 (0%)
-- **Pendente:** 45/64 (70%)
+- **Pendente:** 38/64 (59%)
 - **Estimativa Total:** ~515 horas
 
 ---
@@ -249,7 +249,16 @@
 2. **Sprint F2 - Campanhas** ✅ 100% Completa!
    - ✅ Lista de campanhas com navegação
    - ✅ Criar nova campanha com validações
-   - ✅ Detalhes da campanha com abas
+   - ✅ Detalhes da campanha
+
+3. **Sprint F3 - Mapas e Cenas** ✅ 100% Completa!
+   - ✅ Lista de cenas com grid responsivo
+   - ✅ Editor de cenas com configurações avançadas
+   - ✅ Upload de imagem de fundo
+   - ✅ Configurador de grid visual
+   - ✅ Visualizador de mapa interativo
+   - ✅ Sistema de zoom/pan com mouse
+   - ✅ Toolbar de ferramentas completa com abas
    - ✅ Sistema completo de convites (email + token)
    - ✅ Gerenciar jogadores com remoção
    - ✅ Entrar por código de campanha

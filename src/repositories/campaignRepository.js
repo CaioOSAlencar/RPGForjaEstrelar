@@ -174,6 +174,17 @@ export const addUserToCampaign = async (campaignId, userId) => {
 };
 
 export const checkUserInCampaign = async (campaignId, userId) => {
+  // Verificar se é o mestre
+  const campaign = await prisma.campaign.findUnique({
+    where: { id: campaignId },
+    select: { masterId: true }
+  });
+  
+  if (campaign && campaign.masterId === userId) {
+    return { role: 'master' };
+  }
+
+  // Verificar se é jogador
   return await prisma.campaignUser.findUnique({
     where: {
       campaignId_userId: {
@@ -196,13 +207,13 @@ export const removeUserFromCampaign = async (campaignId, userId) => {
 };
 
 export const getCampaignPlayers = async (campaignId) => {
-  return await prisma.campaignUser.findMany({
+  // Buscar todos os usuários da campanha (incluindo o mestre)
+  const campaignUsers = await prisma.campaignUser.findMany({
     where: {
-      campaignId,
-      role: 'player'
+      campaignId
     },
     select: {
-      userId: true,
+      role: true,
       joinedAt: true,
       user: {
         select: {
@@ -213,4 +224,46 @@ export const getCampaignPlayers = async (campaignId) => {
       }
     }
   });
+
+  // Buscar o mestre da campanha
+  const campaign = await prisma.campaign.findUnique({
+    where: { id: campaignId },
+    select: {
+      master: {
+        select: {
+          id: true,
+          name: true,
+          email: true
+        }
+      }
+    }
+  });
+
+  // Combinar os dados
+  const players = campaignUsers.map(cu => ({
+    id: cu.user.id,
+    name: cu.user.name,
+    email: cu.user.email,
+    role: cu.role,
+    joinedAt: cu.joinedAt
+  }));
+
+  // Adicionar o mestre se não estiver na lista
+  if (campaign?.master) {
+    const masterInList = players.find(p => p.id === campaign.master.id);
+    if (!masterInList) {
+      players.unshift({
+        id: campaign.master.id,
+        name: campaign.master.name,
+        email: campaign.master.email,
+        role: 'master',
+        joinedAt: null
+      });
+    } else {
+      // Atualizar o papel do mestre se ele estiver na lista
+      masterInList.role = 'master';
+    }
+  }
+
+  return players;
 };

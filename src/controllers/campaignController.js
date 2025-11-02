@@ -16,6 +16,7 @@ import { ResponseHelper } from '../utils/responseHelper.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
 import { generateInviteToken, generateRoomCode } from '../utils/generateToken.js';
+import emailService from '../services/emailService.js';
 
 export const createNewCampaign = asyncHandler(async (req, res) => {
   const { name, system, description } = req.body;
@@ -77,8 +78,25 @@ export const invitePlayerByEmail = asyncHandler(async (req, res) => {
     expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 dias
   });
 
+  const inviteLink = `${process.env.FRONTEND_URL || 'http://localhost:3100'}/invite/${invite.token}`;
+
+  // Enviar email de convite
+  try {
+    const emailResult = await emailService.sendCampaignInvite(
+      invite.email,
+      campaign.name,
+      campaign.master.name,
+      inviteLink
+    );
+    
+    console.log('📧 Resultado do envio de email:', emailResult);
+  } catch (emailError) {
+    console.error('❌ Erro ao enviar email:', emailError);
+    // Não falhar a operação se o email não for enviado
+  }
+
   return ResponseHelper.created(res, {
-    inviteLink: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/invite/${invite.token}`,
+    inviteLink,
     email: invite.email,
     expiresAt: invite.expiresAt
   }, 'Convite criado com sucesso!');
@@ -100,7 +118,7 @@ export const getShareableLink = asyncHandler(async (req, res) => {
   }
 
   return ResponseHelper.success(res, {
-    shareLink: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/join/${campaign.roomCode}`,
+    shareLink: `${process.env.FRONTEND_URL || 'http://localhost:3100'}/join/${campaign.roomCode}`,
     roomCode: campaign.roomCode,
     campaignName: campaign.name
   }, 'Link compartilhável gerado com sucesso');
@@ -161,9 +179,9 @@ export const joinByRoomCode = asyncHandler(async (req, res) => {
     throw ApiError.notFound('Campanha não encontrada com este código');
   }
 
-  // Verificar se usuário já está na campanha
+  // Verificar se usuário já está na campanha (como mestre ou jogador)
   const existingUser = await checkUserInCampaign(campaign.id, userId);
-  if (existingUser) {
+  if (existingUser || campaign.masterId === userId) {
     throw ApiError.conflict('Você já participa desta campanha');
   }
 
@@ -208,18 +226,40 @@ export const removePlayer = asyncHandler(async (req, res) => {
 });
 
 // Listar jogadores da campanha
+// Buscar campanha por ID
+export const getCampaignById = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user.userId;
+
+  // Buscar campanha
+  const campaign = await findCampaignById(parseInt(id));
+  if (!campaign) {
+    throw ApiError.notFound('Campanha não encontrada');
+  }
+
+  // Verificar se usuário tem acesso à campanha (é mestre ou jogador)
+  const userInCampaign = await checkUserInCampaign(parseInt(id), userId);
+  if (campaign.masterId !== userId && !userInCampaign) {
+    throw ApiError.forbidden('Você não tem acesso a esta campanha');
+  }
+
+  return ResponseHelper.success(res, campaign, 'Campanha encontrada com sucesso');
+});
+
 export const listCampaignPlayers = asyncHandler(async (req, res) => {
   const { campaignId } = req.params;
   const userId = req.user.userId;
 
-  // Verificar se campanha existe e se usuário é o mestre
+  // Verificar se campanha existe
   const campaign = await findCampaignById(parseInt(campaignId));
   if (!campaign) {
     throw ApiError.notFound('Campanha não encontrada');
   }
 
-  if (campaign.masterId !== userId) {
-    throw ApiError.forbidden('Apenas o mestre pode listar jogadores');
+  // Verificar se usuário tem acesso à campanha (é mestre ou jogador)
+  const userInCampaign = await checkUserInCampaign(parseInt(campaignId), userId);
+  if (campaign.masterId !== userId && !userInCampaign) {
+    throw ApiError.forbidden('Você não tem acesso a esta campanha');
   }
 
   // Buscar jogadores da campanha

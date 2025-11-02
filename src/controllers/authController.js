@@ -32,7 +32,22 @@ export const register = asyncHandler(async (req, res) => {
     role: 'player'
   });
 
-  return ResponseHelper.created(res, user, 'Usuário cadastrado com sucesso!');
+  // Gerar token JWT para login automático após registro
+  const token = jwt.sign(
+    { userId: user.id, email: user.email, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: '7d' }
+  );
+
+  return ResponseHelper.created(res, {
+    token,
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    }
+  }, 'Usuário cadastrado com sucesso!');
 });
 
 export const login = asyncHandler(async (req, res) => {

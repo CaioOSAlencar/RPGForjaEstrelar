@@ -13,7 +13,7 @@ import asyncHandler from 'express-async-handler';
 // RF11 - Criar cena com upload de imagem
 export const createNewScene = asyncHandler(async (req, res) => {
   const { name, campaignId } = req.body;
-  const userId = req.user.id;
+  const userId = req.user.userId;
 
   // Validações
   const validation = validateCreateScene({ name, campaignId });
@@ -54,7 +54,7 @@ export const createNewScene = asyncHandler(async (req, res) => {
 // Listar cenas da campanha
 export const listCampaignScenes = asyncHandler(async (req, res) => {
   const { campaignId } = req.params;
-  const userId = req.user.id;
+  const userId = req.user.userId;
 
   // Verificar se campanha existe e se usuário participa
   const campaign = await findCampaignById(parseInt(campaignId));
@@ -77,7 +77,7 @@ export const listCampaignScenes = asyncHandler(async (req, res) => {
 // Obter detalhes de uma cena
 export const getSceneDetails = asyncHandler(async (req, res) => {
   const { sceneId } = req.params;
-  const userId = req.user.id;
+  const userId = req.user.userId;
 
   // Buscar cena
   const scene = await findSceneById(parseInt(sceneId));
@@ -97,7 +97,7 @@ export const getSceneDetails = asyncHandler(async (req, res) => {
 export const updateSceneSettings = asyncHandler(async (req, res) => {
   const { sceneId } = req.params;
   const { name, gridSize, gridColor, snapToGrid } = req.body;
-  const userId = req.user.id;
+  const userId = req.user.userId;
 
   // Validações
   const validation = validateUpdateScene({ name, gridSize, gridColor, snapToGrid });
@@ -133,7 +133,7 @@ export const updateSceneSettings = asyncHandler(async (req, res) => {
 // RF45 - Deletar cena
 export const deleteSceneById = asyncHandler(async (req, res) => {
   const { sceneId } = req.params;
-  const userId = req.user.id;
+  const userId = req.user.userId;
 
   // Buscar cena
   const scene = await findSceneById(parseInt(sceneId));

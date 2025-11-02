@@ -2,6 +2,7 @@ import express from 'express';
 import { 
   createNewCampaign, 
   listUserCampaigns,
+  getCampaignById,
   invitePlayerByEmail,
   getShareableLink,
   acceptInvite,
@@ -18,6 +19,9 @@ router.post('/', authenticateToken, createNewCampaign);
 
 // RF10 - Listar campanhas do usuário (rota protegida)
 router.get('/', authenticateToken, listUserCampaigns);
+
+// Buscar campanha por ID (rota protegida)
+router.get('/:id', authenticateToken, getCampaignById);
 
 // RF08 - Convidar jogador por email (rota protegida)
 router.post('/:campaignId/invite', authenticateToken, invitePlayerByEmail);
