@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import RPGBackground from '../components/RPGBackground';
 import RPGHeader from '../components/RPGHeader';
 import PasswordInput from '../components/PasswordInput';
+import { getUserFromStorage } from '../utils/localStorage';
 
 const Profile: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -17,7 +18,7 @@ const Profile: React.FC = () => {
   const [activeTab, setActiveTab] = useState('profile');
   const navigate = useNavigate();
 
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const user = getUserFromStorage();
 
   React.useEffect(() => {
     setFormData(prev => ({ ...prev, name: user.name || '' }));

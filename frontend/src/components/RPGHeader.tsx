@@ -1,9 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getUserFromStorage } from '../utils/localStorage';
 
 const RPGHeader: React.FC = () => {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const user = getUserFromStorage();
 
   const handleLogout = () => {
     localStorage.clear();

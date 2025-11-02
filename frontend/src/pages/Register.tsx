@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/auth';
 import RPGBackground from '../components/RPGBackground';
 import PasswordInput from '../components/PasswordInput';
+import { setUserInStorage } from '../utils/localStorage';
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -26,7 +27,7 @@ const Register: React.FC = () => {
       const response = await authService.register(formData);
       console.log('✅ Registro bem-sucedido:', response);
       localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
+      setUserInStorage(response.user);
       navigate('/dashboard');
     } catch (err: any) {
       console.error('❌ Erro no registro:', err);

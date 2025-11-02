@@ -2,9 +2,10 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import RPGBackground from '../components/RPGBackground';
 import RPGHeader from '../components/RPGHeader';
+import { getUserFromStorage } from '../utils/localStorage';
 
 const Dashboard: React.FC = () => {
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const user = getUserFromStorage();
   const navigate = useNavigate();
 
   return (
