@@ -1,8 +1,13 @@
-import jwt from 'jsonwebtoken'
-import bcrypt from 'bcryptjs'
-import { supabase } from '../../lib/supabase.js'
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
+const { createClient } = require('@supabase/supabase-js')
 
-export default async function handler(req, res) {
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+)
+
+module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
