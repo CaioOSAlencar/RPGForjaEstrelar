@@ -1,7 +1,0 @@
-{
-  "functions": {
-    "test.js": {
-      "runtime": "nodejs18.x"
-    }
-  }
-}
