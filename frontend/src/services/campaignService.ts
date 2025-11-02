@@ -27,8 +27,15 @@ export const campaignService = {
   },
 
   async create(data: CreateCampaignData): Promise<Campaign> {
-    const response = await api.post('/campaigns', data);
-    return response.data.data;
+    console.log('Criando campanha:', data);
+    try {
+      const response = await api.post('/campaigns', data);
+      console.log('Resposta da API:', response.data);
+      return response.data.data;
+    } catch (error) {
+      console.error('Erro ao criar campanha:', error);
+      throw error;
+    }
   },
 
   async getById(id: number): Promise<Campaign> {

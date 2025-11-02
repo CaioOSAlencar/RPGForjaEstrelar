@@ -4,6 +4,7 @@ import RPGBackground from '../components/RPGBackground';
 import RPGHeader from '../components/RPGHeader';
 import ConfirmationModal from '../components/ConfirmationModal';
 import { campaignService, Campaign } from '../services/campaignService';
+import { getUserFromStorage } from '../utils/localStorage';
 
 interface Player {
   id: number;
@@ -23,7 +24,7 @@ const CampaignDetails: React.FC = () => {
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [shareLink, setShareLink] = useState('');
 
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const user = getUserFromStorage();
 
   useEffect(() => {
     if (id) {
@@ -261,17 +262,26 @@ const CampaignDetails: React.FC = () => {
                   color: '#D4AF37', 
                   marginBottom: '1rem'
                 }}>
-                  🎲 Ações Rápidas
+                  🎮 Jogar
                 </h3>
                 <div style={{ display: 'grid', gap: '1rem' }}>
-                  <button className="rpg-button" style={{ opacity: 0.5 }}>
-                    🗺️ Mapas e Cenas (Em breve)
+                  <button 
+                    onClick={() => navigate(`/campaigns/${id}/play`)}
+                    className="rpg-button"
+                    style={{ 
+                      background: 'linear-gradient(135deg, #228B22 0%, #32CD32 100%)',
+                      fontSize: '1.1rem',
+                      padding: '1rem'
+                    }}
+                  >
+                    🎲 Entrar na Mesa de Jogo
                   </button>
-                  <button className="rpg-button" style={{ opacity: 0.5 }}>
-                    🎭 Fichas de Personagem (Em breve)
-                  </button>
-                  <button className="rpg-button" style={{ opacity: 0.5 }}>
-                    💬 Chat da Campanha (Em breve)
+                  <button 
+                    onClick={() => navigate(`/campaigns/${id}/scenes`)}
+                    className="rpg-button"
+                    style={{ opacity: 0.7, fontSize: '0.9rem' }}
+                  >
+                    ⚙️ Gerenciar Cenas (Mestre)
                   </button>
                 </div>
               </div>
