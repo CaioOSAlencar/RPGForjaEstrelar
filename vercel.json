@@ -8,8 +8,20 @@
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "src": "/api/auth/login",
+      "dest": "/api/auth/login"
+    },
+    {
+      "src": "/api/auth/register",
+      "dest": "/api/auth/register"
+    },
+    {
+      "src": "/api/campaigns",
+      "dest": "/api/campaigns"
+    },
+    {
+      "src": "/api/scenes",
+      "dest": "/api/scenes"
     }
   ]
 }
