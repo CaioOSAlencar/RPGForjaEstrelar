@@ -53,10 +53,10 @@ export const sceneService = {
 
   async uploadBackground(sceneId: string, file: File): Promise<string> {
     const formData = new FormData();
-    formData.append('background', file);
-    const response = await api.post(`/scenes/${sceneId}/background`, formData, {
+    formData.append('backgroundImage', file);
+    const response = await api.put(`/scenes/${sceneId}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
-    return response.data.backgroundUrl;
+    return response.data.data?.backgroundImage || response.data.backgroundImage;
   }
 };

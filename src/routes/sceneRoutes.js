@@ -21,7 +21,7 @@ router.get('/campaign/:campaignId', authenticateToken, listCampaignScenes);
 router.get('/:sceneId', authenticateToken, getSceneDetails);
 
 // RF12 - Atualizar configurações da cena (rota protegida)
-router.put('/:sceneId', authenticateToken, updateSceneSettings);
+router.put('/:sceneId', authenticateToken, uploadScene, updateSceneSettings);
 
 // Upload de background da cena (rota protegida)
 router.post('/:sceneId/background', authenticateToken, uploadScene, updateSceneSettings);
