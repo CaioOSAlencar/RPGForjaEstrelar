@@ -1,19 +1,9 @@
 {
   "name": "rpg-forja-estrelar",
   "version": "1.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vercel dev",
-    "build": "cd frontend && npm run build",
-    "deploy": "vercel --prod"
-  },
   "dependencies": {
     "@supabase/supabase-js": "^2.38.0",
     "jsonwebtoken": "^9.0.2",
-    "bcryptjs": "^2.4.3",
-    "nodemailer": "^6.9.7"
-  },
-  "devDependencies": {
-    "vercel": "^32.5.0"
+    "bcryptjs": "^2.4.3"
   }
 }
