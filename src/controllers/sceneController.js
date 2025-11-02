@@ -124,7 +124,7 @@ export const updateSceneSettings = asyncHandler(async (req, res) => {
 
   // Se foi enviada uma imagem de background
   if (req.file) {
-    updateData.backgroundImage = `/uploads/scenes/${req.file.filename}`;
+    updateData.backgroundUrl = `/uploads/scenes/${req.file.filename}`;
   }
 
   // Atualizar cena

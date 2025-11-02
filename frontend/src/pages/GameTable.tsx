@@ -385,8 +385,8 @@ const GameTable: React.FC = () => {
         {/* Main Canvas Area */}
         <div style={{
           flex: 1,
-          background: activeScene?.backgroundImage 
-            ? `url(${activeScene.backgroundImage}) center/cover no-repeat, rgba(0,0,0,0.3)`
+          background: activeScene?.backgroundUrl 
+            ? `url(http://localhost:3000${activeScene.backgroundUrl}) center/cover no-repeat, rgba(0,0,0,0.3)`
             : 'rgba(0,0,0,0.3)',
           display: 'flex',
           alignItems: 'center',

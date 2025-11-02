@@ -23,6 +23,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Servir arquivos estáticos da pasta uploads
+app.use('/uploads', express.static('uploads'));
+
 // Rotas da API
 app.use("/api/auth", authRoutes);
 app.use("/api/campaigns", campaignRoutes);
