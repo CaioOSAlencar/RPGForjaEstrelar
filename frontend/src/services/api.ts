@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://rpg-forja-estrelar.vercel.app/api';
+const API_BASE_URL = 'https://rpgforjaestrelar.onrender.com/api';
 
 console.log('🌐 Usando API da Vercel');
 console.log('🔗 API URL:', API_BASE_URL);

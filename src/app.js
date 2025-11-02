@@ -38,13 +38,14 @@ app.use("/api/dice-macros", diceMacroRoutes);
 app.use("/api/music", musicRoutes);
 app.use("/api/campaigns", campaignExportRoutes);
 
-// Swagger na raiz
-const swaggerOptions = getSwaggerOptions();
-const swaggerSpec = swaggerJSDoc(swaggerOptions);
-app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
+// Health check
 app.get("/health", (req, res) => {
   res.json({ status: "OK", timestamp: new Date().toISOString() });
 });
+
+// Swagger documentation
+const swaggerOptions = getSwaggerOptions();
+const swaggerSpec = swaggerJSDoc(swaggerOptions);
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 export default app;
