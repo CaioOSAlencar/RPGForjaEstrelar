@@ -58,7 +58,12 @@ export const findSceneById = async (id) => {
         select: {
           id: true,
           name: true,
-          masterId: true
+          masterId: true,
+          campaignUsers: {
+            select: {
+              userId: true
+            }
+          }
         }
       }
     }

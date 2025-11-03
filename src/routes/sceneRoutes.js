@@ -6,6 +6,10 @@ import {
   updateSceneSettings,
   deleteSceneById
 } from '../controllers/sceneController.js';
+import { 
+  listSceneTokens,
+  addTokenToMap
+} from '../controllers/tokenController.js';
 import { authenticateToken } from '../middlewares/authMiddleware.js';
 import { uploadScene } from '../utils/fileUpload.js';
 
@@ -28,5 +32,9 @@ router.post('/:sceneId/background', authenticateToken, uploadScene, updateSceneS
 
 // RF45 - Deletar cena (rota protegida)
 router.delete('/:sceneId', authenticateToken, deleteSceneById);
+
+// Rotas de tokens da cena
+router.get('/:sceneId/tokens', authenticateToken, listSceneTokens);
+router.post('/:sceneId/tokens', authenticateToken, addTokenToMap);
 
 export default router;

@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { campaignService, Campaign } from '../services/campaignService';
 import { sceneService, Scene } from '../services/sceneService';
+import { tokenService, MapToken } from '../services/tokenService';
+import { TokenLibrary } from '../components/TokenLibrary';
+import { TokenControls } from '../components/TokenControls';
+import { useWebSocket } from '../hooks/useWebSocket';
 import { getUserFromStorage } from '../utils/localStorage';
 
 interface Player {
@@ -37,6 +41,15 @@ const GameTable: React.FC = () => {
   const [chatMinimized, setChatMinimized] = useState(false);
   const [playersMinimized, setPlayersMinimized] = useState(false);
   
+  // Token system
+  const [mapTokens, setMapTokens] = useState<MapToken[]>([]);
+  const [showTokenLibrary, setShowTokenLibrary] = useState(false);
+  const [selectedToken, setSelectedToken] = useState<MapToken | null>(null);
+  const [draggedToken, setDraggedToken] = useState<MapToken | null>(null);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [showTokenControls, setShowTokenControls] = useState(false);
+  const [controlledToken, setControlledToken] = useState<MapToken | null>(null);
+  
   // Measurement system
   const [showMeasurementPanel, setShowMeasurementPanel] = useState(false);
   const [measurementShape, setMeasurementShape] = useState<'ruler' | 'square' | 'cone' | 'circle' | 'beam'>('ruler');
@@ -50,6 +63,45 @@ const GameTable: React.FC = () => {
   }>>([]);
 
   const user = getUserFromStorage();
+  const { isConnected, emit, on, off } = useWebSocket({ 
+    campaignId: id, 
+    sceneId: activeScene?.id 
+  });
+
+  // WebSocket event listeners
+  useEffect(() => {
+    if (!isConnected) return;
+
+    const unsubscribers = [
+      on('token-added', (data: { mapToken: MapToken }) => {
+        setMapTokens(prev => [...prev, data.mapToken]);
+      }),
+      on('token-moved', (data: { tokenId: string, x: number, y: number }) => {
+        setMapTokens(prev => prev.map(t => 
+          t.id === data.tokenId ? { ...t, x: data.x, y: data.y } : t
+        ));
+      }),
+      on('token-updated', (data: { tokenId: string, updates: Partial<MapToken> }) => {
+        setMapTokens(prev => prev.map(t => 
+          t.id === data.tokenId ? { ...t, ...data.updates } : t
+        ));
+      }),
+      on('token-removed', (data: { tokenId: string }) => {
+        setMapTokens(prev => prev.filter(t => t.id !== data.tokenId));
+      }),
+      on('scene-change', (data: { sceneId: string }) => {
+        const scene = scenes.find(s => s.id === data.sceneId);
+        if (scene) {
+          setActiveScene(scene);
+          loadMapTokens(scene.id);
+        }
+      })
+    ];
+
+    return () => {
+      unsubscribers.forEach(unsub => unsub && unsub());
+    };
+  }, [isConnected, scenes]);
 
   useEffect(() => {
     if (id) {
@@ -73,6 +125,11 @@ const GameTable: React.FC = () => {
       const validScenes = Array.isArray(scenesData) ? scenesData : [];
       const firstScene = validScenes[0] || null;
       setActiveScene(firstScene);
+      
+      // Carregar tokens se há cena ativa
+      if (firstScene) {
+        loadMapTokens(firstScene.id);
+      }
     } catch (err: any) {
       setError('Erro ao carregar dados da campanha');
       console.error('Erro:', err);
@@ -95,12 +152,39 @@ const GameTable: React.FC = () => {
     }
   };
 
+  const loadMapTokens = async (sceneId: string) => {
+    try {
+      const tokens = await tokenService.getMapTokens(sceneId);
+      setMapTokens(tokens);
+    } catch (error) {
+      console.error('Erro ao carregar tokens do mapa:', error);
+    }
+  };
+
   const handleSceneChange = async (scene: Scene) => {
-    if (user.id !== campaign?.masterId) return; // Só o mestre pode trocar cenas
+    if (user.id !== campaign?.masterId) return;
     
     setActiveScene(scene);
-    // TODO: Notificar outros jogadores via WebSocket
-    console.log('Cena alterada para:', scene.name);
+    loadMapTokens(scene.id);
+    emit('scene-change', { sceneId: scene.id, campaignId: id });
+  };
+
+  const handleTokenSelect = async (token: any) => {
+    if (!activeScene) return;
+    
+    try {
+      const mapToken = await tokenService.addTokenToMap(
+        activeScene.id, 
+        token.id, 
+        100, 
+        100
+      );
+      setMapTokens(prev => [...prev, mapToken]);
+      emit('token-added', { mapToken, sceneId: activeScene.id });
+      setShowTokenLibrary(false);
+    } catch (error) {
+      console.error('Erro ao adicionar token:', error);
+    }
   };
 
   const handleCreateScene = () => {
@@ -112,6 +196,74 @@ const GameTable: React.FC = () => {
   const handleZoomOut = () => setZoom(prev => Math.max(prev / 1.2, 0.1));
   const handleResetView = () => { setZoom(1); setPan({ x: 0, y: 0 }); };
 
+  const handleTokenDoubleClick = (token: MapToken) => {
+    setControlledToken(token);
+    setShowTokenControls(true);
+  };
+
+  const handleTokenUpdate = async (updates: Partial<MapToken>) => {
+    if (!controlledToken) return;
+    
+    try {
+      await tokenService.updateMapToken(controlledToken.id, updates);
+      setMapTokens(prev => prev.map(t => 
+        t.id === controlledToken.id ? { ...t, ...updates } : t
+      ));
+      emit('token-updated', { 
+        tokenId: controlledToken.id, 
+        updates,
+        sceneId: activeScene?.id 
+      });
+      setControlledToken(prev => prev ? { ...prev, ...updates } : null);
+    } catch (error) {
+      console.error('Erro ao atualizar token:', error);
+    }
+  };
+
+  const handleTokenDelete = async () => {
+    if (!controlledToken) return;
+    
+    try {
+      await tokenService.deleteMapToken(controlledToken.id);
+      setMapTokens(prev => prev.filter(t => t.id !== controlledToken.id));
+      emit('token-removed', { 
+        tokenId: controlledToken.id,
+        sceneId: activeScene?.id 
+      });
+      setShowTokenControls(false);
+      setControlledToken(null);
+    } catch (error) {
+      console.error('Erro ao deletar token:', error);
+    }
+  };
+
+  const handleTokenMouseDown = (e: React.MouseEvent, token: MapToken) => {
+    e.stopPropagation();
+    if (tool !== 'select') return;
+    
+    setSelectedToken(token);
+    setDraggedToken(token);
+    
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (rect && activeScene) {
+      const canvasX = e.clientX - rect.left;
+      const canvasY = e.clientY - rect.top;
+      
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const imageWidth = (activeScene.width || 1920) * zoom;
+      const imageHeight = (activeScene.height || 1080) * zoom;
+      
+      const tokenScreenX = centerX + pan.x - imageWidth / 2 + token.x * zoom;
+      const tokenScreenY = centerY + pan.y - imageHeight / 2 + token.y * zoom;
+      
+      setDragOffset({
+        x: canvasX - tokenScreenX,
+        y: canvasY - tokenScreenY
+      });
+    }
+  };
+
   const handleMouseDown = (e: React.MouseEvent) => {
     if (tool === 'pan') {
       setIsDragging(true);
@@ -119,11 +271,9 @@ const GameTable: React.FC = () => {
     } else if (tool === 'ruler') {
       const rect = canvasRef.current?.getBoundingClientRect();
       if (rect && activeScene) {
-        // Corrigir cálculo das coordenadas
         const canvasX = e.clientX - rect.left;
         const canvasY = e.clientY - rect.top;
         
-        // Ajustar para o centro da imagem
         const centerX = rect.width / 2;
         const centerY = rect.height / 2;
         const imageWidth = (activeScene.width || 1920) * zoom;
@@ -132,19 +282,14 @@ const GameTable: React.FC = () => {
         const x = (canvasX - centerX - pan.x + imageWidth / 2) / zoom;
         const y = (canvasY - centerY - pan.y + imageHeight / 2) / zoom;
         
-        console.log('Clique na régua:', { x, y, isRulerActive, canvasX, canvasY, pan, zoom });
-        
         if (!isRulerActive) {
           setRulerStart({ x, y });
           setRulerEnd({ x, y });
           setIsRulerActive(true);
-          console.log('Iniciando medição:', { x, y });
         } else {
           setRulerEnd({ x, y });
           setIsRulerActive(false);
-          console.log('Finalizando medição:', { start: rulerStart, end: { x, y } });
           
-          // Se for permanente, salvar a medição
           if (measurementMode === 'permanent' && rulerStart) {
             const newMeasurement = {
               id: Date.now().toString(),
@@ -154,10 +299,8 @@ const GameTable: React.FC = () => {
               distance: calculateDistance()
             };
             setPermanentMeasurements(prev => [...prev, newMeasurement]);
-            console.log('Medição salva:', newMeasurement);
           }
           
-          // Se for temporário, limpar instantaneamente
           if (measurementMode === 'temporary') {
             setRulerStart(null);
             setRulerEnd(null);
@@ -168,10 +311,27 @@ const GameTable: React.FC = () => {
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (isDragging && tool === 'pan') {
+    if (draggedToken && tool === 'select') {
+      const rect = canvasRef.current?.getBoundingClientRect();
+      if (rect && activeScene) {
+        const canvasX = e.clientX - rect.left;
+        const canvasY = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const imageWidth = (activeScene.width || 1920) * zoom;
+        const imageHeight = (activeScene.height || 1080) * zoom;
+        
+        const x = (canvasX - dragOffset.x - centerX - pan.x + imageWidth / 2) / zoom;
+        const y = (canvasY - dragOffset.y - centerY - pan.y + imageHeight / 2) / zoom;
+        
+        setMapTokens(prev => prev.map(t => 
+          t.id === draggedToken.id ? { ...t, x, y } : t
+        ));
+      }
+    } else if (isDragging && tool === 'pan') {
       setPan({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y });
     } else if (isRulerActive && tool === 'ruler') {
-      // Quando a régua está ativa, a linha segue o mouse para preview
       const rect = canvasRef.current?.getBoundingClientRect();
       if (rect && activeScene) {
         const canvasX = e.clientX - rect.left;
@@ -190,7 +350,29 @@ const GameTable: React.FC = () => {
     }
   };
 
-  const handleMouseUp = () => setIsDragging(false);
+  const handleMouseUp = async () => {
+    if (draggedToken) {
+      try {
+        const updatedToken = mapTokens.find(t => t.id === draggedToken.id);
+        if (updatedToken) {
+          await tokenService.updateMapToken(draggedToken.id, {
+            x: updatedToken.x,
+            y: updatedToken.y
+          });
+          emit('token-moved', { 
+            tokenId: draggedToken.id, 
+            x: updatedToken.x, 
+            y: updatedToken.y,
+            sceneId: activeScene?.id 
+          });
+        }
+      } catch (error) {
+        console.error('Erro ao atualizar posição do token:', error);
+      }
+      setDraggedToken(null);
+    }
+    setIsDragging(false);
+  };
 
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
@@ -206,7 +388,7 @@ const GameTable: React.FC = () => {
     const dy = endPoint.y - startPoint.y;
     const pixelDistance = Math.sqrt(dx * dx + dy * dy);
     const gridSize = activeScene?.gridSize || 50;
-    return Math.round((pixelDistance / gridSize) * 5); // 5 pés por quadrado
+    return Math.round((pixelDistance / gridSize) * 5);
   };
   
   const removePermanentMeasurement = (id: string) => {
@@ -221,12 +403,10 @@ const GameTable: React.FC = () => {
   };
   
   const renderMeasurementShape = (start: {x: number, y: number}, end: {x: number, y: number}, shape: string, color = '#ff6b6b') => {
-    console.log('Renderizando shape:', { start, end, shape, color });
     const distance = calculateDistance(start, end);
     
     switch (shape) {
       case 'ruler':
-        // Régua: linha normal sólida
         return (
           <>
             <line x1={start.x} y1={start.y} x2={end.x} y2={end.y} stroke={color} strokeWidth="4" />
@@ -239,7 +419,6 @@ const GameTable: React.FC = () => {
         );
       
       case 'square':
-        // Quadrado: centro fixo, cresce conforme mouse se afasta
         const radius = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2));
         const squareSize = radius * 2;
         return (
@@ -261,7 +440,6 @@ const GameTable: React.FC = () => {
         );
       
       case 'circle':
-        // Círculo: centro fixo, raio cresce conforme mouse se afasta
         const circleRadius = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2));
         return (
           <>
@@ -281,10 +459,9 @@ const GameTable: React.FC = () => {
         );
       
       case 'cone':
-        // Cone: centro fixo, abertura de 60 graus
         const angle = Math.atan2(end.y - start.y, end.x - start.x);
         const coneLength = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2));
-        const coneAngle = Math.PI / 6; // 30 graus cada lado = 60 graus total
+        const coneAngle = Math.PI / 6;
         const x1 = start.x + Math.cos(angle - coneAngle) * coneLength;
         const y1 = start.y + Math.sin(angle - coneAngle) * coneLength;
         const x2 = start.x + Math.cos(angle + coneAngle) * coneLength;
@@ -305,10 +482,9 @@ const GameTable: React.FC = () => {
         );
       
       case 'beam':
-        // Feixe: linha com largura fixa
         const beamLength = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2));
         const beamAngle = Math.atan2(end.y - start.y, end.x - start.x);
-        const beamWidth = 30; // largura fixa do feixe
+        const beamWidth = 30;
         const perpAngle = beamAngle + Math.PI / 2;
         const bx1 = start.x + Math.cos(perpAngle) * beamWidth;
         const by1 = start.y + Math.sin(perpAngle) * beamWidth;
@@ -581,92 +757,92 @@ const GameTable: React.FC = () => {
           </div>
           
           {!chatMinimized && (
-            <div style={{
-              flex: 1,
-              padding: '0.5rem',
-              overflowY: 'auto',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.5rem'
-            }}>
-            {chatMessages.length === 0 ? (
-              <div style={{ 
-                textAlign: 'center', 
-                color: 'rgba(212, 175, 55, 0.5)',
-                fontSize: '0.9rem',
-                marginTop: '2rem'
-              }}>
-                Nenhuma mensagem ainda...<br/>
-                Seja o primeiro a falar!
-              </div>
-            ) : (
-              chatMessages.map((msg) => (
-                <div key={msg.id} style={{
-                  background: 'rgba(212, 175, 55, 0.1)',
-                  borderRadius: '4px',
-                  padding: '0.5rem',
-                  fontSize: '0.8rem'
-                }}>
-                  <div style={{ 
-                    color: '#d4af37', 
-                    fontWeight: 'bold',
-                    marginBottom: '0.25rem'
-                  }}>
-                    {msg.user} <span style={{ 
-                      color: 'rgba(212, 175, 55, 0.6)',
-                      fontWeight: 'normal',
-                      fontSize: '0.7rem'
-                    }}>
-                      {msg.timestamp}
-                    </span>
-                  </div>
-                  <div style={{ color: '#ffffff' }}>
-                    {msg.message}
-                  </div>
-                </div>
-              ))
-            )}
-            </div>
-          )}
-          
-          {!chatMinimized && (
-            <form onSubmit={handleSendMessage} style={{
-              padding: '0.5rem',
-              borderTop: '2px solid rgba(212, 175, 55, 0.3)',
-              display: 'flex',
-              gap: '0.5rem'
-            }}>
-            <input
-              type="text"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="Digite sua mensagem..."
-              style={{
+            <>
+              <div style={{
                 flex: 1,
-                background: 'rgba(0,0,0,0.5)',
-                border: '1px solid rgba(212, 175, 55, 0.3)',
-                borderRadius: '4px',
                 padding: '0.5rem',
-                color: '#ffffff',
-                fontSize: '0.8rem'
-              }}
-            />
-            <button
-              type="submit"
-              disabled={!newMessage.trim()}
-              style={{
-                background: newMessage.trim() ? '#d4af37' : 'rgba(212, 175, 55, 0.3)',
-                border: 'none',
-                borderRadius: '4px',
+                overflowY: 'auto',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.5rem'
+              }}>
+                {chatMessages.length === 0 ? (
+                  <div style={{ 
+                    textAlign: 'center', 
+                    color: 'rgba(212, 175, 55, 0.5)',
+                    fontSize: '0.9rem',
+                    marginTop: '2rem'
+                  }}>
+                    Nenhuma mensagem ainda...<br/>
+                    Seja o primeiro a falar!
+                  </div>
+                ) : (
+                  chatMessages.map((msg) => (
+                    <div key={msg.id} style={{
+                      background: 'rgba(212, 175, 55, 0.1)',
+                      borderRadius: '4px',
+                      padding: '0.5rem',
+                      fontSize: '0.8rem'
+                    }}>
+                      <div style={{ 
+                        color: '#d4af37', 
+                        fontWeight: 'bold',
+                        marginBottom: '0.25rem'
+                      }}>
+                        {msg.user} <span style={{ 
+                          color: 'rgba(212, 175, 55, 0.6)',
+                          fontWeight: 'normal',
+                          fontSize: '0.7rem'
+                        }}>
+                          {msg.timestamp}
+                        </span>
+                      </div>
+                      <div style={{ color: '#ffffff' }}>
+                        {msg.message}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+              
+              <form onSubmit={handleSendMessage} style={{
                 padding: '0.5rem',
-                color: '#1a1a1a',
-                cursor: newMessage.trim() ? 'pointer' : 'not-allowed',
-                fontSize: '0.8rem'
-              }}
-            >
-              📤
-            </button>
-            </form>
+                borderTop: '2px solid rgba(212, 175, 55, 0.3)',
+                display: 'flex',
+                gap: '0.5rem'
+              }}>
+                <input
+                  type="text"
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  placeholder="Digite sua mensagem..."
+                  style={{
+                    flex: 1,
+                    background: 'rgba(0,0,0,0.5)',
+                    border: '1px solid rgba(212, 175, 55, 0.3)',
+                    borderRadius: '4px',
+                    padding: '0.5rem',
+                    color: '#ffffff',
+                    fontSize: '0.8rem'
+                  }}
+                />
+                <button
+                  type="submit"
+                  disabled={!newMessage.trim()}
+                  style={{
+                    background: newMessage.trim() ? '#d4af37' : 'rgba(212, 175, 55, 0.3)',
+                    border: 'none',
+                    borderRadius: '4px',
+                    padding: '0.5rem',
+                    color: '#1a1a1a',
+                    cursor: newMessage.trim() ? 'pointer' : 'not-allowed',
+                    fontSize: '0.8rem'
+                  }}
+                >
+                  📤
+                </button>
+              </form>
+            </>
           )}
         </div>
 
@@ -712,6 +888,105 @@ const GameTable: React.FC = () => {
                 />
               )}
               
+              {/* Tokens */}
+              {mapTokens.map(token => {
+                const gridSize = activeScene.gridSize || 50;
+                const tokenSize = gridSize * token.width;
+                return (
+                  <div
+                    key={token.id}
+                    style={{
+                      position: 'absolute',
+                      left: token.x,
+                      top: token.y,
+                      width: tokenSize,
+                      height: tokenSize,
+                      cursor: tool === 'select' ? 'grab' : 'default',
+                      zIndex: selectedToken?.id === token.id ? 1001 : 1000,
+                      border: selectedToken?.id === token.id ? '3px solid #d4af37' : 'none',
+                      borderRadius: '50%',
+                      overflow: 'hidden',
+                      boxShadow: '0 4px 8px rgba(0,0,0,0.5)'
+                    }}
+                    onMouseDown={(e) => handleTokenMouseDown(e, token)}
+                    onDoubleClick={() => handleTokenDoubleClick(token)}
+                  >
+                    <img
+                      src={token.imageUrl || token.token?.imageUrl || 'https://via.placeholder.com/50x50?text=Token'}
+                      alt={token.name || token.token?.name || 'Token'}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        pointerEvents: 'none'
+                      }}
+                      draggable={false}
+                    />
+                    {/* Conditions */}
+                    {token.conditions && token.conditions.length > 0 && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '-12px',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        display: 'flex',
+                        gap: '2px'
+                      }}>
+                        {token.conditions.slice(0, 3).map((condition, idx) => (
+                          <div
+                            key={idx}
+                            style={{
+                              background: 'rgba(220, 53, 69, 0.9)',
+                              color: 'white',
+                              fontSize: '8px',
+                              padding: '1px 3px',
+                              borderRadius: '2px',
+                              whiteSpace: 'nowrap'
+                            }}
+                          >
+                            {condition.slice(0, 3)}
+                          </div>
+                        ))}
+                        {token.conditions.length > 3 && (
+                          <div style={{
+                            background: 'rgba(108, 117, 125, 0.9)',
+                            color: 'white',
+                            fontSize: '8px',
+                            padding: '1px 3px',
+                            borderRadius: '2px'
+                          }}>
+                            +{token.conditions.length - 3}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    
+                    {/* HP Bar */}
+                    {token.hp < token.maxHp && (
+                      <div style={{
+                        position: 'absolute',
+                        bottom: '-8px',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        width: '80%',
+                        height: '6px',
+                        background: 'rgba(0,0,0,0.8)',
+                        borderRadius: '3px',
+                        overflow: 'hidden'
+                      }}>
+                        <div style={{
+                          width: `${(token.hp / token.maxHp) * 100}%`,
+                          height: '100%',
+                          background: token.hp > token.maxHp * 0.5 ? '#28a745' : 
+                                    token.hp > token.maxHp * 0.25 ? '#ffc107' : '#dc3545',
+                          transition: 'width 0.3s ease'
+                        }} />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+              
               {/* Grid */}
               {showGrid && (
                 <svg
@@ -756,14 +1031,7 @@ const GameTable: React.FC = () => {
                   zIndex: 1000
                 }}
               >
-                {/* Linha de teste sempre visível */}
-                <line x1="100" y1="100" x2="300" y2="300" stroke="yellow" strokeWidth="8" />
-                <circle cx="100" cy="100" r="10" fill="yellow" />
-                <circle cx="300" cy="300" r="10" fill="yellow" />
-                <text x="200" y="190" fill="yellow" fontSize="20" fontWeight="bold" textAnchor="middle">
-                  TESTE
-                </text>
-                
+
                 {/* Current measurement */}
                 {rulerStart && rulerEnd && (
                   <g>
@@ -780,6 +1048,7 @@ const GameTable: React.FC = () => {
               </svg>
             </div>
           )}
+          
           {/* Scene Info */}
           {activeScene && (
             <div style={{
@@ -819,8 +1088,7 @@ const GameTable: React.FC = () => {
             {[
               { id: 'select', icon: '🖱️', title: 'Selecionar' },
               { id: 'pan', icon: '✋', title: 'Mover Câmera' },
-              { id: 'ruler', icon: '📏', title: 'Medição' },
-              { id: 'spell', icon: '✨', title: 'Área de Magia' }
+              { id: 'ruler', icon: '📏', title: 'Medição' }
             ].map((toolItem) => (
               <button
                 key={toolItem.id}
@@ -854,6 +1122,30 @@ const GameTable: React.FC = () => {
             ))}
             
             <div style={{ width: '1px', height: '36px', background: 'rgba(212, 175, 55, 0.3)', margin: '0 0.25rem' }}></div>
+            
+            {/* Token Library */}
+            {isMaster && (
+              <button
+                onClick={() => setShowTokenLibrary(true)}
+                title="Biblioteca de Tokens"
+                style={{
+                  background: 'rgba(138, 43, 226, 0.2)',
+                  border: 'none',
+                  borderRadius: '6px',
+                  padding: '0.5rem',
+                  color: '#8a2be2',
+                  cursor: 'pointer',
+                  fontSize: '1rem',
+                  width: '36px',
+                  height: '36px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                🎭
+              </button>
+            )}
             
             {/* Grid Toggle */}
             <button
@@ -1061,6 +1353,21 @@ const GameTable: React.FC = () => {
             </div>
           )}
           
+          {/* Close measurement panel when clicking outside */}
+          {showMeasurementPanel && (
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                zIndex: 50
+              }}
+              onClick={() => setShowMeasurementPanel(false)}
+            />
+          )}
+          
           {/* Debug Info */}
           <div style={{
             position: 'absolute',
@@ -1082,21 +1389,6 @@ const GameTable: React.FC = () => {
             End: {rulerEnd ? `${Math.round(rulerEnd.x)},${Math.round(rulerEnd.y)}` : 'null'}<br/>
             Permanentes: {permanentMeasurements.length}
           </div>
-          
-          {/* Close measurement panel when clicking outside */}
-          {showMeasurementPanel && (
-            <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                zIndex: 50
-              }}
-              onClick={() => setShowMeasurementPanel(false)}
-            />
-          )}
           
           {!activeScene && (
             <div style={{
@@ -1168,41 +1460,79 @@ const GameTable: React.FC = () => {
               padding: '0.5rem',
               overflowY: 'auto'
             }}>
-            {players.map((player) => (
-              <div key={player.id} style={{
-                background: 'rgba(212, 175, 55, 0.1)',
-                borderRadius: '4px',
-                padding: '0.5rem',
-                marginBottom: '0.5rem',
-                fontSize: '0.8rem'
-              }}>
-                <div style={{ 
-                  color: '#d4af37', 
-                  fontWeight: 'bold',
-                  marginBottom: '0.25rem'
+              {players.map((player) => (
+                <div key={player.id} style={{
+                  background: 'rgba(212, 175, 55, 0.1)',
+                  borderRadius: '4px',
+                  padding: '0.5rem',
+                  marginBottom: '0.5rem',
+                  fontSize: '0.8rem'
                 }}>
-                  {player.role === 'master' ? '👑' : '🎭'} {player.name}
-                  {player.id === user.id && (
-                    <span style={{ 
-                      color: 'rgba(212, 175, 55, 0.6)',
-                      fontSize: '0.7rem',
-                      marginLeft: '0.25rem'
-                    }}>
-                      (Você)
-                    </span>
-                  )}
+                  <div style={{ 
+                    color: '#d4af37', 
+                    fontWeight: 'bold',
+                    marginBottom: '0.25rem'
+                  }}>
+                    {player.role === 'master' ? '👑' : '🎭'} {player.name}
+                    {player.id === user.id && (
+                      <span style={{ 
+                        color: 'rgba(212, 175, 55, 0.6)',
+                        fontSize: '0.7rem',
+                        marginLeft: '0.25rem'
+                      }}>
+                        (Você)
+                      </span>
+                    )}
+                  </div>
+                  <div style={{ 
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '0.7rem'
+                  }}>
+                    {player.role === 'master' ? 'Mestre' : 'Jogador'}
+                  </div>
                 </div>
-                <div style={{ 
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  fontSize: '0.7rem'
-                }}>
-                  {player.role === 'master' ? 'Mestre' : 'Jogador'}
-                </div>
-              </div>
-            ))}
+              ))}
             </div>
           )}
         </div>
+      </div>
+      
+      {/* Token Library Modal */}
+      <TokenLibrary
+        campaignId={id!}
+        sceneId={activeScene?.id}
+        onTokenSelect={handleTokenSelect}
+        isOpen={showTokenLibrary}
+        onClose={() => setShowTokenLibrary(false)}
+      />
+      
+      {/* Token Controls Modal */}
+      {controlledToken && (
+        <TokenControls
+          token={controlledToken}
+          onUpdate={handleTokenUpdate}
+          onDelete={handleTokenDelete}
+          isVisible={showTokenControls}
+          onClose={() => {
+            setShowTokenControls(false);
+            setControlledToken(null);
+          }}
+        />
+      )}
+      
+      {/* WebSocket Status */}
+      <div style={{
+        position: 'fixed',
+        top: '10px',
+        right: '10px',
+        background: isConnected ? 'rgba(40, 167, 69, 0.9)' : 'rgba(220, 53, 69, 0.9)',
+        color: 'white',
+        padding: '0.25rem 0.5rem',
+        borderRadius: '4px',
+        fontSize: '0.7rem',
+        zIndex: 1000
+      }}>
+        {isConnected ? '🟢 Online' : '🔴 Offline'}
       </div>
     </div>
   );
