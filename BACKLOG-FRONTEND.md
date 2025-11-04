@@ -33,8 +33,8 @@
 - ✅ Interface RPG consistente
 
 **📋 CHECKLIST DE TESTES - AUTENTICAÇÃO:**
-- [ ] Acessar página de login
-- [ ] Fazer login com credenciais válidas
+- [x] Acessar página de login
+- [xt] Fazer login com credenciais válidas
 - [ ] Tentar login com credenciais inválidas (deve dar erro)
 - [ ] Acessar página de cadastro
 - [ ] Criar nova conta
