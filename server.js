@@ -9,7 +9,7 @@ const server = createServer(app);
 // Inicializar WebSocket
 socketManager.initialize(server);
 
-server.listen(port, () => {
-  console.log(`Servidor rodando em http://localhost:${port}`);
+server.listen(port, '0.0.0.0', () => {
+  console.log(`Servidor rodando na porta ${port}`);
   console.log(`WebSocket habilitado para tempo real`);
 });
