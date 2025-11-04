@@ -1,8 +1,10 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://rpgforjaestrelar.onrender.com/api'
+  : 'http://localhost:3000/api';
 
-console.log('🌐 Usando API do Localhost');
+console.log('🌐 Ambiente:', process.env.NODE_ENV);
 console.log('🔗 API URL:', API_BASE_URL);
 
 export const api = axios.create({
