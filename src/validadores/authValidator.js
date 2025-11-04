@@ -47,22 +47,14 @@ export const validateRegister = (data) => {
     }
   }
 
-  // Validação da senha
+  // Validação da senha (relaxada para produção)
   if (!password) {
     errors.push('Senha é obrigatória');
   } else {
-    if (password.length < 8) {
-      errors.push('Senha deve ter pelo menos 8 caracteres');
+    if (password.length < 6) {
+      errors.push('Senha deve ter pelo menos 6 caracteres');
     }
-    if (!/[A-Z]/.test(password)) {
-      errors.push('Senha deve conter pelo menos 1 letra maiúscula');
-    }
-    if (!/[0-9]/.test(password)) {
-      errors.push('Senha deve conter pelo menos 1 número');
-    }
-    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-      errors.push('Senha deve conter pelo menos 1 caractere especial (!@#$%^&*)');
-    }
+    // Removidas validações rígidas para facilitar cadastro
   }
 
   return {
@@ -84,23 +76,12 @@ export const validateUpdateProfile = (data) => {
     }
   }
 
-  // Validação da senha (opcional)
+  // Validação da senha (opcional e relaxada)
   if (password !== undefined) {
     if (!password) {
       errors.push('Senha não pode ser vazia');
-    } else {
-      if (password.length < 8) {
-        errors.push('Senha deve ter pelo menos 8 caracteres');
-      }
-      if (!/[A-Z]/.test(password)) {
-        errors.push('Senha deve conter pelo menos 1 letra maiúscula');
-      }
-      if (!/[0-9]/.test(password)) {
-        errors.push('Senha deve conter pelo menos 1 número');
-      }
-      if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-        errors.push('Senha deve conter pelo menos 1 caractere especial (!@#$%^&*)');
-      }
+    } else if (password.length < 6) {
+      errors.push('Senha deve ter pelo menos 6 caracteres');
     }
   }
 
