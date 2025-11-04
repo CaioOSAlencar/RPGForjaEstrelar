@@ -15,6 +15,7 @@ import Scenes from './pages/Scenes';
 import SceneEditor from './pages/SceneEditor';
 import SceneViewer from './pages/SceneViewer';
 import GameTable from './pages/GameTable';
+import EditCampaign from './pages/EditCampaign';
 import { authService } from './services/auth';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -92,6 +93,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <CampaignDetails />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/campaigns/:id/edit" 
+            element={
+              <ProtectedRoute>
+                <EditCampaign />
               </ProtectedRoute>
             } 
           />

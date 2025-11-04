@@ -4,7 +4,7 @@ export interface Scene {
   id: string;
   name: string;
   description?: string;
-  backgroundImage?: string;
+  backgroundUrl?: string;
   gridSize: number;
   gridColor: string;
   gridOpacity: number;
@@ -34,7 +34,7 @@ export const sceneService = {
 
   async getScene(sceneId: string): Promise<Scene> {
     const response = await api.get(`/scenes/${sceneId}`);
-    return response.data;
+    return response.data.data || response.data;
   },
 
   async createScene(data: CreateSceneData): Promise<Scene> {
@@ -53,10 +53,10 @@ export const sceneService = {
 
   async uploadBackground(sceneId: string, file: File): Promise<string> {
     const formData = new FormData();
-    formData.append('background', file);
-    const response = await api.post(`/scenes/${sceneId}/background`, formData, {
+    formData.append('backgroundImage', file);
+    const response = await api.put(`/scenes/${sceneId}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
-    return response.data.backgroundUrl;
+    return response.data.data?.backgroundUrl || response.data.backgroundUrl;
   }
 };

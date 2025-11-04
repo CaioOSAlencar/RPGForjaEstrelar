@@ -32,6 +32,18 @@
 - ✅ Tratamento específico de erros
 - ✅ Interface RPG consistente
 
+**📋 CHECKLIST DE TESTES - AUTENTICAÇÃO:**
+- [x] Acessar página de login
+- [x] Fazer login com credenciais válidas
+- [x] Tentar login com credenciais inválidas (deve dar erro)
+- [x] Acessar página de cadastro
+- [x] Criar nova conta
+- [x] Verificar se é redirecionado para dashboard após login
+- [x] Fazer logout
+- [x] Tentar acessar página protegida sem login (deve redirecionar)
+- [x] Verificar se header RPG aparece corretamente
+- [x] Navegar entre páginas usando o menu
+
 ---
 
 ## 🏰 SPRINT F2 - CAMPANHAS E CONVITES
@@ -59,6 +71,19 @@
 - ✅ Gerenciamento de jogadores
 - ✅ Componentes reutilizáveis
 
+**📋 CHECKLIST DE TESTES - CAMPANHAS:**
+- [x] Acessar lista de campanhas
+- [x] Criar nova campanha
+- [x] Editar campanha existente
+- [x] Deletar campanha
+- [ ] Convidar jogador por email
+- [ ] Gerar link de convite
+- [ ] Aceitar convite (com outro usuário)
+- [x] Entrar na campanha por código
+- [ ] Gerenciar jogadores (remover/alterar permissões)
+- [x] Verificar se apenas o mestre pode editar
+- [x] Testar validações de formulário
+
 ---
 
 ## 🗺️ SPRINT F3 - MAPAS E CENAS
@@ -81,28 +106,79 @@
 - ✅ Configurações de grid visuais
 - ✅ Controles de navegação
 
+**📋 CHECKLIST DE TESTES - MAPAS E CENAS:**
+- [ ] Acessar gerenciamento de cenas
+- [ ] Criar nova cena
+- [ ] Fazer upload de imagem de fundo
+- [ ] Configurar tamanho do grid
+- [ ] Alterar cor do grid
+- [ ] Ativar/desativar snap to grid
+- [ ] Editar cena existente
+- [ ] Deletar cena
+- [ ] Navegar para mesa de jogo
+- [ ] Testar zoom in/out no mapa
+- [ ] Testar pan (arrastar mapa)
+- [ ] Alternar entre cenas na mesa
+- [ ] Verificar se grid aparece corretamente
+
 ---
 
 ## 🎭 SPRINT F4 - TOKENS E TEMPO REAL
-**Duração:** 3 semanas | **Status:** ⏸️ Pendente
+**Duração:** 3 semanas | **Status:** ✅ Completa
 
 | ID | Tela/Componente | Prioridade | Status | Estimativa |
 |----|-----------------|------------|--------|------------|
-| F22 | Biblioteca de Tokens | Alta | ⏸️ Pendente | 10h |
-| F23 | Upload de Token | Alta | ⏸️ Pendente | 8h |
-| F24 | Token no Mapa (Drag & Drop) | Alta | ⏸️ Pendente | 16h |
-| F25 | Controles de Token | Alta | ⏸️ Pendente | 12h |
-| F26 | Barra de HP Visual | Alta | ⏸️ Pendente | 8h |
-| F27 | Sistema de Condições | Média | ⏸️ Pendente | 10h |
-| F28 | WebSocket Client | Alta | ⏸️ Pendente | 12h |
-| F29 | Sincronização Tempo Real | Alta | ⏸️ Pendente | 14h |
+| F22 | Biblioteca de Tokens | Alta | ✅ Concluído | 10h |
+| F23 | Upload de Token | Alta | ✅ Concluído | 8h |
+| F24 | Token no Mapa (Drag & Drop) | Alta | ✅ Concluído | 16h |
+| F25 | Controles de Token | Alta | ✅ Concluído | 12h |
+| F26 | Barra de HP Visual | Alta | ✅ Concluído | 8h |
+| F27 | Sistema de Condições | Média | ✅ Concluído | 10h |
+| F28 | WebSocket Client | Alta | ✅ Concluído | 12h |
+| F29 | Sincronização Tempo Real | Alta | ✅ Concluído | 14h |
 
 **Entregáveis:**
-- ⏸️ Sistema completo de tokens
-- ⏸️ Drag & drop interativo
-- ⏸️ Controles visuais (HP, condições)
-- ⏸️ Sincronização em tempo real
-- ⏸️ Interface responsiva
+- ✅ Sistema completo de tokens com biblioteca e upload
+- ✅ Drag & drop interativo com sincronização
+- ✅ Controles visuais (HP, condições, visibilidade)
+- ✅ Sincronização em tempo real via WebSocket
+- ✅ Interface responsiva com double-click para controles
+
+**📋 CHECKLIST DE TESTES - SISTEMA DE TOKENS:**
+
+**Upload de Tokens:**
+- [ ] Abrir biblioteca de tokens (botão 🎭)
+- [ ] Fazer upload de uma imagem (JPG/PNG)
+- [ ] Verificar se a imagem aparece na biblioteca
+- [ ] Verificar se o nome do arquivo aparece corretamente
+- [ ] Testar upload com arquivo muito grande (deve dar erro)
+- [ ] Testar upload com arquivo não-imagem (deve dar erro)
+
+**Biblioteca de Tokens:**
+- [ ] Alternar entre visualização em grade (🗄️) e lista (📋)
+- [ ] Buscar tokens pelo nome
+- [ ] Verificar se tokens persistem após recarregar a página
+- [ ] Deletar um token (botão 🗑️)
+
+**Tokens no Mapa:**
+- [ ] Clicar em um token da biblioteca para adicionar ao mapa
+- [ ] Verificar se o token aparece no mapa com a imagem correta
+- [ ] Arrastar token pelo mapa (drag & drop)
+- [ ] Verificar se a posição persiste após recarregar
+- [ ] Double-click no token para abrir controles
+
+**Controles de Token:**
+- [ ] Alterar HP do token
+- [ ] Alterar HP máximo
+- [ ] Adicionar condições (ex: "Envenenado")
+- [ ] Remover condições
+- [ ] Verificar se barra de HP aparece quando HP < HP máximo
+- [ ] Deletar token do mapa
+
+**Sincronização (se tiver outro usuário):**
+- [ ] Verificar se tokens aparecem para outros jogadores
+- [ ] Verificar se movimentação sincroniza em tempo real
+- [ ] Verificar se alterações de HP sincronizam
 
 ---
 
@@ -222,7 +298,7 @@
 - **Sprint F1:** 9/9 (100%) - ✅ Completa
 - **Sprint F2:** 10/10 (100%) - ✅ Completa
 - **Sprint F3:** 7/7 (100%) - ✅ Completa
-- **Sprint F4:** 0/8 (0%) - Tokens
+- **Sprint F4:** 8/8 (100%) - ✅ Completa
 - **Sprint F5:** 0/7 (0%) - Chat
 - **Sprint F6:** 0/8 (0%) - Fichas
 - **Sprint F7:** 0/6 (0%) - Notas
@@ -230,9 +306,9 @@
 
 ### Geral Frontend
 - **Total de Telas:** 64 componentes (incluindo extras)
-- **Concluído:** 26/64 (41%)
+- **Concluído:** 34/64 (53%)
 - **Em Andamento:** 0/64 (0%)
-- **Pendente:** 38/64 (59%)
+- **Pendente:** 30/64 (47%)
 - **Estimativa Total:** ~515 horas
 
 ---
@@ -249,7 +325,29 @@
 2. **Sprint F2 - Campanhas** ✅ 100% Completa!
    - ✅ Lista de campanhas com navegação
    - ✅ Criar nova campanha com validações
-   - ✅ Detalhes da campanha
+   - ✅ Detalhes da campanha com gerenciamento
+   - ✅ Sistema de convites e códigos
+   - ✅ Gerenciamento de jogadores
+
+3. **Sprint F3 - Mapas e Cenas** ✅ 100% Completa!
+   - ✅ Editor de cenas com upload de imagens
+   - ✅ Configurador de grid visual
+   - ✅ Sistema de zoom/pan no mapa
+   - ✅ Ferramentas de medição avançadas
+   - ✅ Interface Roll20-like
+
+4. **Sprint F4 - Tokens e Tempo Real** ✅ 100% Completa!
+   - ✅ Biblioteca de tokens com upload
+   - ✅ Sistema drag & drop no mapa
+   - ✅ Controles de HP e condições
+   - ✅ WebSocket para sincronização
+   - ✅ Interface de controle por double-click
+
+5. **Próxima Sprint F5 - Chat e Dados**
+   - ⏸️ Sistema de chat em tempo real
+   - ⏸️ Rolagem de dados integrada
+   - ⏸️ Histórico de rolagens
+   - ⏸️ Comandos e whispersa
 
 3. **Sprint F3 - Mapas e Cenas** ✅ 100% Completa!
    - ✅ Lista de cenas com grid responsivo

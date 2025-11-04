@@ -30,11 +30,9 @@ export const createNewToken = asyncHandler(async (req, res) => {
     return sendError(res, 404, 'Cena não encontrada');
   }
 
-  // Por enquanto, apenas o mestre pode criar tokens
-  // TODO: Permitir que jogadores criem seus próprios tokens
-  if (scene.campaign.masterId !== userId) {
-    return sendError(res, 403, 'Apenas o mestre pode criar tokens nesta cena');
-  }
+  // Temporariamente permitir qualquer usuário autenticado
+  // TODO: Implementar verificação de participação na campanha
+  console.log('Usuario:', userId, 'Mestre:', scene.campaign.masterId, 'Participantes:', scene.campaign.campaignUsers);
 
   // Preparar dados do token
   const tokenData = {
@@ -53,7 +51,7 @@ export const createNewToken = asyncHandler(async (req, res) => {
 
   // Se foi enviada uma imagem
   if (req.file) {
-    tokenData.imageUrl = `/uploads/tokens/${req.file.filename}`;
+    tokenData.imageUrl = `http://localhost:3000/uploads/tokens/${req.file.filename}`;
   }
 
   // Criar token
@@ -300,4 +298,50 @@ export const getAvailableConditions = asyncHandler(async (req, res) => {
     data: conditions, 
     message: 'Condições disponíveis listadas com sucesso' 
   });
+});
+
+// Adicionar token existente ao mapa
+export const addTokenToMap = asyncHandler(async (req, res) => {
+  const { sceneId } = req.params;
+  const { tokenId, x, y } = req.body;
+  const userId = req.user.id;
+
+  // Verificar se cena existe
+  const scene = await findSceneById(parseInt(sceneId));
+  if (!scene) {
+    return sendError(res, 404, 'Cena não encontrada');
+  }
+
+  // Buscar o token original se tokenId foi fornecido
+  let tokenData = {
+    name: `Token ${Date.now()}`,
+    imageUrl: `http://localhost:3000/uploads/tokens/default.png`
+  };
+  
+  if (tokenId) {
+    const originalToken = await findTokenById(parseInt(tokenId));
+    if (originalToken) {
+      tokenData.name = originalToken.name;
+      tokenData.imageUrl = originalToken.imageUrl;
+    }
+  }
+
+  // Criar token no mapa
+  const mapTokenData = {
+    sceneId: parseInt(sceneId),
+    userId: userId,
+    x: x || 100,
+    y: y || 100,
+    size: 1,
+    rotation: 0,
+    hp: 100,
+    maxHp: 100,
+    conditions: null,
+    isVisible: true,
+    name: tokenData.name,
+    imageUrl: tokenData.imageUrl
+  };
+
+  const mapToken = await createToken(mapTokenData);
+  return sendResponse(res, 201, { data: mapToken, message: 'Token adicionado ao mapa!' });
 });

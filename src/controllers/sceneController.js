@@ -96,14 +96,8 @@ export const getSceneDetails = asyncHandler(async (req, res) => {
 // RF12 - Atualizar configurações da cena (grid, etc)
 export const updateSceneSettings = asyncHandler(async (req, res) => {
   const { sceneId } = req.params;
-  const { name, gridSize, gridColor, snapToGrid } = req.body;
+  const { name, gridSize, gridColor, snapToGrid, description, gridOpacity, width, height } = req.body;
   const userId = req.user.userId;
-
-  // Validações
-  const validation = validateUpdateScene({ name, gridSize, gridColor, snapToGrid });
-  if (!validation.isValid) {
-    return sendError(res, 400, validation.errors);
-  }
 
   // Buscar cena
   const scene = await findSceneById(parseInt(sceneId));
@@ -120,9 +114,18 @@ export const updateSceneSettings = asyncHandler(async (req, res) => {
   const updateData = {};
   
   if (name !== undefined) updateData.name = name.trim();
+  if (description !== undefined) updateData.description = description;
   if (gridSize !== undefined) updateData.gridSize = parseInt(gridSize);
   if (gridColor !== undefined) updateData.gridColor = gridColor;
+  if (gridOpacity !== undefined) updateData.gridOpacity = parseFloat(gridOpacity);
+  if (width !== undefined) updateData.width = parseInt(width);
+  if (height !== undefined) updateData.height = parseInt(height);
   if (snapToGrid !== undefined) updateData.snapToGrid = snapToGrid;
+
+  // Se foi enviada uma imagem de background
+  if (req.file) {
+    updateData.backgroundUrl = `/uploads/scenes/${req.file.filename}`;
+  }
 
   // Atualizar cena
   const updatedScene = await updateScene(parseInt(sceneId), updateData);

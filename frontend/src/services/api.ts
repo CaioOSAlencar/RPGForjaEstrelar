@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://rpgforjaestrelar.onrender.com/api';
+const API_BASE_URL = 'http://localhost:3000/api';
 
-console.log('🌐 Usando API da Vercel');
+console.log('🌐 Usando API do Localhost');
 console.log('🔗 API URL:', API_BASE_URL);
 
 export const api = axios.create({

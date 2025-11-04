@@ -82,7 +82,7 @@ const Scenes: React.FC = () => {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <button
-            onClick={() => navigate(`/campaigns/${campaignId}`)}
+            onClick={() => navigate(`/campaigns/${campaignId}/play`)}
             style={{
               background: 'rgba(212, 175, 55, 0.2)',
               border: '2px solid #d4af37',
@@ -223,10 +223,10 @@ const Scenes: React.FC = () => {
               e.currentTarget.style.transform = 'translateY(0)';
               e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
             }}>
-              {scene.backgroundImage ? (
+              {scene.backgroundUrl ? (
                 <div style={{
                   height: '200px',
-                  background: `url(${scene.backgroundImage}) center/cover`,
+                  background: `url(http://localhost:3000${scene.backgroundUrl}) center/cover`,
                   position: 'relative'
                 }}>
                   <div style={{

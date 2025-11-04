@@ -86,6 +86,35 @@ export const findCampaignById = async (id) => {
   });
 };
 
+export const updateCampaignById = async (id, updateData) => {
+  return await prisma.campaign.update({
+    where: { id },
+    data: updateData,
+    select: {
+      id: true,
+      name: true,
+      system: true,
+      description: true,
+      masterId: true,
+      roomCode: true,
+      createdAt: true,
+      master: {
+        select: {
+          id: true,
+          name: true,
+          email: true
+        }
+      }
+    }
+  });
+};
+
+export const deleteCampaignById = async (id) => {
+  return await prisma.campaign.delete({
+    where: { id }
+  });
+};
+
 export const findCampaignByRoomCode = async (roomCode) => {
   return await prisma.campaign.findUnique({
     where: { roomCode },

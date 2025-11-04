@@ -6,6 +6,10 @@ import {
   updateSceneSettings,
   deleteSceneById
 } from '../controllers/sceneController.js';
+import { 
+  listSceneTokens,
+  addTokenToMap
+} from '../controllers/tokenController.js';
 import { authenticateToken } from '../middlewares/authMiddleware.js';
 import { uploadScene } from '../utils/fileUpload.js';
 
@@ -21,9 +25,16 @@ router.get('/campaign/:campaignId', authenticateToken, listCampaignScenes);
 router.get('/:sceneId', authenticateToken, getSceneDetails);
 
 // RF12 - Atualizar configurações da cena (rota protegida)
-router.put('/:sceneId', authenticateToken, updateSceneSettings);
+router.put('/:sceneId', authenticateToken, uploadScene, updateSceneSettings);
+
+// Upload de background da cena (rota protegida)
+router.post('/:sceneId/background', authenticateToken, uploadScene, updateSceneSettings);
 
 // RF45 - Deletar cena (rota protegida)
 router.delete('/:sceneId', authenticateToken, deleteSceneById);
+
+// Rotas de tokens da cena
+router.get('/:sceneId/tokens', authenticateToken, listSceneTokens);
+router.post('/:sceneId/tokens', authenticateToken, addTokenToMap);
 
 export default router;

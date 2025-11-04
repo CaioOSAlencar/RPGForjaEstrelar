@@ -3,6 +3,8 @@ import {
   createCampaign, 
   findCampaignsByUser, 
   findCampaignById,
+  updateCampaignById,
+  deleteCampaignById,
   findCampaignByRoomCode,
   createCampaignInvite,
   findInviteByToken,
@@ -244,6 +246,57 @@ export const getCampaignById = asyncHandler(async (req, res) => {
   }
 
   return ResponseHelper.success(res, campaign, 'Campanha encontrada com sucesso');
+});
+
+export const updateCampaign = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { name, system, description } = req.body;
+  const userId = req.user.userId;
+
+  // Verificar se campanha existe e se usuário é o mestre
+  const campaign = await findCampaignById(parseInt(id));
+  if (!campaign) {
+    throw ApiError.notFound('Campanha não encontrada');
+  }
+
+  if (campaign.masterId !== userId) {
+    throw ApiError.forbidden('Apenas o mestre pode editar a campanha');
+  }
+
+  // Validações
+  const validation = validateCreateCampaign({ name, system, description });
+  if (!validation.isValid) {
+    throw ApiError.badRequest('Dados inválidos', validation.errors.map(err => ({ message: err })));
+  }
+
+  // Atualizar campanha
+  const updatedCampaign = await updateCampaignById(parseInt(id), {
+    name: name.trim(),
+    system: system?.trim() || 'D&D 5e',
+    description: description?.trim() || null
+  });
+
+  return ResponseHelper.success(res, updatedCampaign, 'Campanha atualizada com sucesso!');
+});
+
+export const deleteCampaign = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user.userId;
+
+  // Verificar se campanha existe e se usuário é o mestre
+  const campaign = await findCampaignById(parseInt(id));
+  if (!campaign) {
+    throw ApiError.notFound('Campanha não encontrada');
+  }
+
+  if (campaign.masterId !== userId) {
+    throw ApiError.forbidden('Apenas o mestre pode deletar a campanha');
+  }
+
+  // Deletar campanha
+  await deleteCampaignById(parseInt(id));
+
+  return ResponseHelper.success(res, null, 'Campanha deletada com sucesso!');
 });
 
 export const listCampaignPlayers = asyncHandler(async (req, res) => {

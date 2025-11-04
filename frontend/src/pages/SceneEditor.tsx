@@ -36,11 +36,11 @@ const SceneEditor: React.FC = () => {
       setFormData({
         name: data.name,
         description: data.description || '',
-        gridSize: data.gridSize,
-        gridColor: data.gridColor,
-        gridOpacity: data.gridOpacity,
-        width: data.width,
-        height: data.height
+        gridSize: data.gridSize || 50,
+        gridColor: data.gridColor || '#ffffff',
+        gridOpacity: data.gridOpacity || 0.3,
+        width: data.width || 1920,
+        height: data.height || 1080
       });
     } catch (error) {
       toast.error('Erro ao carregar cena');
@@ -53,7 +53,18 @@ const SceneEditor: React.FC = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const updatedScene = await sceneService.updateScene(sceneId!, formData);
+      // Garantir que todos os valores estão definidos
+      const dataToSave = {
+        name: formData.name,
+        description: formData.description || '',
+        gridSize: formData.gridSize || 50,
+        gridColor: formData.gridColor || '#ffffff',
+        gridOpacity: formData.gridOpacity || 0.3,
+        width: formData.width || 1920,
+        height: formData.height || 1080
+      };
+      
+      const updatedScene = await sceneService.updateScene(sceneId!, dataToSave);
       setScene(updatedScene);
       toast.success('Cena salva com sucesso');
     } catch (error) {
@@ -74,9 +85,26 @@ const SceneEditor: React.FC = () => {
 
     setUploading(true);
     try {
+      // Obter dimensões da imagem
+      const img = new Image();
+      const imageUrl = URL.createObjectURL(file);
+      
+      img.onload = async () => {
+        // Atualizar dimensões no formData
+        setFormData(prev => ({
+          ...prev,
+          width: img.width,
+          height: img.height
+        }));
+        
+        URL.revokeObjectURL(imageUrl);
+      };
+      
+      img.src = imageUrl;
+      
       const backgroundUrl = await sceneService.uploadBackground(sceneId!, file);
-      setScene(prev => prev ? { ...prev, backgroundImage: backgroundUrl } : null);
-      toast.success('Imagem de fundo carregada');
+      setScene(prev => prev ? { ...prev, backgroundUrl: backgroundUrl } : null);
+      toast.success('Imagem carregada! Dimensões ajustadas automaticamente.');
     } catch (error) {
       toast.error('Erro ao fazer upload da imagem');
     } finally {
@@ -420,10 +448,10 @@ const SceneEditor: React.FC = () => {
                 onChange={handleBackgroundUpload}
                 style={{ display: 'none' }}
               />
-              {scene.backgroundImage && (
+              {scene.backgroundUrl && (
                 <div style={{ marginTop: '1rem' }}>
                   <img
-                    src={scene.backgroundImage}
+                    src={`http://localhost:3000${scene.backgroundUrl}`}
                     alt="Preview"
                     style={{
                       width: '100%',
@@ -636,11 +664,11 @@ const SceneEditor: React.FC = () => {
                 border: '3px solid #d4af37',
                 borderRadius: '12px',
                 overflow: 'hidden',
-                width: Math.min(formData.width * 0.4, 600),
-                height: Math.min(formData.height * 0.4, 400),
-                backgroundImage: scene.backgroundImage ? `url(${scene.backgroundImage})` : 'linear-gradient(45deg, rgba(212, 175, 55, 0.1) 25%, transparent 25%), linear-gradient(-45deg, rgba(212, 175, 55, 0.1) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(212, 175, 55, 0.1) 75%), linear-gradient(-45deg, transparent 75%, rgba(212, 175, 55, 0.1) 75%)',
-                backgroundSize: scene.backgroundImage ? 'cover' : '20px 20px',
-                backgroundPosition: scene.backgroundImage ? 'center' : '0 0, 0 10px, 10px -10px, -10px 0px',
+                width: Math.min((formData.width || 1920) * 0.4, 600),
+                height: Math.min((formData.height || 1080) * 0.4, 400),
+                backgroundImage: scene.backgroundUrl ? `url(http://localhost:3000${scene.backgroundUrl})` : 'linear-gradient(45deg, rgba(212, 175, 55, 0.1) 25%, transparent 25%), linear-gradient(-45deg, rgba(212, 175, 55, 0.1) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(212, 175, 55, 0.1) 75%), linear-gradient(-45deg, transparent 75%, rgba(212, 175, 55, 0.1) 75%)',
+                backgroundSize: scene.backgroundUrl ? 'cover' : '20px 20px',
+                backgroundPosition: scene.backgroundUrl ? 'center' : '0 0, 0 10px, 10px -10px, -10px 0px',
                 boxShadow: 'inset 0 0 20px rgba(0,0,0,0.3)'
               }}
             >
@@ -659,14 +687,14 @@ const SceneEditor: React.FC = () => {
                   <defs>
                     <pattern
                       id="grid"
-                      width={formData.gridSize * 0.4}
-                      height={formData.gridSize * 0.4}
+                      width={(formData.gridSize || 50) * 0.4}
+                      height={(formData.gridSize || 50) * 0.4}
                       patternUnits="userSpaceOnUse"
                     >
                       <path
-                        d={`M ${formData.gridSize * 0.4} 0 L 0 0 0 ${formData.gridSize * 0.4}`}
+                        d={`M ${(formData.gridSize || 50) * 0.4} 0 L 0 0 0 ${(formData.gridSize || 50) * 0.4}`}
                         fill="none"
-                        stroke={formData.gridColor}
+                        stroke={formData.gridColor || '#ffffff'}
                         strokeWidth="1"
                       />
                     </pattern>
@@ -675,7 +703,7 @@ const SceneEditor: React.FC = () => {
                 </svg>
               )}
               
-              {!scene.backgroundImage && (
+              {!scene.backgroundUrl && (
                 <div style={{
                   position: 'absolute',
                   top: '50%',

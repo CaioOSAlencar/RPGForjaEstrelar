@@ -23,6 +23,8 @@ const CampaignDetails: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [shareLink, setShareLink] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const user = getUserFromStorage();
 
@@ -55,6 +57,19 @@ const CampaignDetails: React.FC = () => {
       setShareLink(linkData.shareLink);
     } catch (err: any) {
       setError('Erro ao gerar link compartilhável');
+    }
+  };
+
+  const handleDeleteCampaign = async () => {
+    setDeleting(true);
+    try {
+      await campaignService.delete(Number(id));
+      navigate('/campaigns');
+    } catch (err: any) {
+      setError('Erro ao deletar campanha');
+    } finally {
+      setDeleting(false);
+      setShowDeleteModal(false);
     }
   };
 
@@ -123,6 +138,17 @@ const CampaignDetails: React.FC = () => {
         {isMaster && (
           <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
             <button
+              onClick={() => navigate(`/campaigns/${id}/edit`)}
+              className="rpg-button"
+              style={{ 
+                flex: 1, 
+                minWidth: '150px',
+                background: 'linear-gradient(135deg, #4169E1 0%, #6495ED 100%)'
+              }}
+            >
+              ✏️ Editar Campanha
+            </button>
+            <button
               onClick={() => setShowInviteModal(true)}
               className="rpg-button"
               style={{ flex: 1, minWidth: '150px' }}
@@ -139,6 +165,17 @@ const CampaignDetails: React.FC = () => {
               }}
             >
               🔗 Link Compartilhável
+            </button>
+            <button
+              onClick={() => setShowDeleteModal(true)}
+              className="rpg-button"
+              style={{ 
+                flex: 1, 
+                minWidth: '150px',
+                background: 'linear-gradient(135deg, #DC143C 0%, #B22222 100%)'
+              }}
+            >
+              🗑️ Deletar Campanha
             </button>
           </div>
         )}
@@ -346,6 +383,19 @@ const CampaignDetails: React.FC = () => {
             }}
           />
         )}
+
+        {/* Delete Confirmation Modal */}
+        <ConfirmationModal
+          isOpen={showDeleteModal}
+          title="⚠️ Deletar Campanha"
+          message={`Tem certeza que deseja deletar a campanha "${campaign?.name}"? Esta ação não pode ser desfeita e todos os dados serão perdidos permanentemente.`}
+          confirmText="🗑️ Deletar Permanentemente"
+          cancelText="❌ Cancelar"
+          onConfirm={handleDeleteCampaign}
+          onCancel={() => setShowDeleteModal(false)}
+          loading={deleting}
+          type="danger"
+        />
 
         <div className="rpg-link">
           <button onClick={() => navigate('/campaigns')}>
