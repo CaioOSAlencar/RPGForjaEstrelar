@@ -349,7 +349,7 @@ export const TokenLibrary: React.FC<TokenLibraryProps> = ({
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
                       flex: 1
-                    }}>{token.name}</span>
+                    }}>{token.name || 'Token sem nome'}</span>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -417,7 +417,7 @@ export const TokenLibrary: React.FC<TokenLibraryProps> = ({
                       fontWeight: 'bold',
                       fontSize: '1.1rem',
                       marginBottom: '0.25rem'
-                    }}>{token.name}</div>
+                    }}>{token.name || 'Token sem nome'}</div>
                     <div style={{
                       color: 'rgba(212, 175, 55, 0.7)',
                       fontSize: '0.9rem'

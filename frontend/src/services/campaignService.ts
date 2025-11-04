@@ -71,5 +71,14 @@ export const campaignService = {
   async removePlayer(campaignId: number, playerId: number) {
     const response = await api.delete(`/campaigns/${campaignId}/players/${playerId}`);
     return response.data;
+  },
+
+  async update(id: number, data: { name: string; description?: string; system: string }): Promise<Campaign> {
+    const response = await api.put(`/campaigns/${id}`, data);
+    return response.data.data;
+  },
+
+  async delete(id: number): Promise<void> {
+    await api.delete(`/campaigns/${id}`);
   }
 };

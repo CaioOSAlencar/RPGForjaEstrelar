@@ -23,7 +23,7 @@ const GameTable: React.FC = () => {
   const [scenes, setScenes] = useState<Scene[]>([]);
   const [activeScene, setActiveScene] = useState<Scene | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | { message?: string }>('');
   const [chatMessages, setChatMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState('');
   
@@ -549,7 +549,7 @@ const GameTable: React.FC = () => {
         background: 'linear-gradient(135deg, #1a1a1a 0%, #2c1810 100%)'
       }}>
         <div style={{ textAlign: 'center', color: '#ff6b6b' }}>
-          <h2>⚠️ {error || 'Campanha não encontrada'}</h2>
+          <h2>⚠️ {typeof error === 'string' ? error : (error?.message || 'Campanha não encontrada')}</h2>
           <button 
             onClick={() => navigate('/campaigns')}
             style={{
@@ -613,7 +613,7 @@ const GameTable: React.FC = () => {
               fontSize: '1.2rem',
               fontFamily: 'Cinzel, serif'
             }}>
-              🏰 {campaign.name}
+              🏰 {campaign?.name || 'Campanha'}
             </h1>
           </div>
           
@@ -622,7 +622,7 @@ const GameTable: React.FC = () => {
               👥 {players.length} jogadores
             </span>
             <span style={{ color: '#d4af37', fontSize: '0.9rem' }}>
-              🎲 {campaign.system}
+              🎲 {campaign?.system || 'Sistema'}
             </span>
           </div>
         </div>
@@ -687,7 +687,7 @@ const GameTable: React.FC = () => {
                     transition: 'all 0.2s ease'
                   }}
                 >
-                  {scene.name}
+                  {scene?.name || 'Cena'}
                   {activeScene?.id === scene.id && ' ●'}
                 </button>
               ))
@@ -789,16 +789,16 @@ const GameTable: React.FC = () => {
                         fontWeight: 'bold',
                         marginBottom: '0.25rem'
                       }}>
-                        {msg.user} <span style={{ 
+                        {msg?.user || 'Usuário'} <span style={{ 
                           color: 'rgba(212, 175, 55, 0.6)',
                           fontWeight: 'normal',
                           fontSize: '0.7rem'
                         }}>
-                          {msg.timestamp}
+                          {msg?.timestamp || ''}
                         </span>
                       </div>
                       <div style={{ color: '#ffffff' }}>
-                        {msg.message}
+                        {typeof msg.message === 'string' ? msg.message : JSON.stringify(msg.message)}
                       </div>
                     </div>
                   ))
@@ -913,7 +913,7 @@ const GameTable: React.FC = () => {
                   >
                     <img
                       src={token.imageUrl || token.token?.imageUrl || 'https://via.placeholder.com/50x50?text=Token'}
-                      alt={token.name || token.token?.name || 'Token'}
+                      alt={token?.name || token?.token?.name || 'Token'}
                       style={{
                         width: '100%',
                         height: '100%',
@@ -944,7 +944,7 @@ const GameTable: React.FC = () => {
                               whiteSpace: 'nowrap'
                             }}
                           >
-                            {condition.slice(0, 3)}
+                            {typeof condition === 'string' ? condition.slice(0, 3) : 'CON'}
                           </div>
                         ))}
                         {token.conditions.length > 3 && (
@@ -1063,7 +1063,7 @@ const GameTable: React.FC = () => {
               border: '2px solid rgba(212, 175, 55, 0.3)',
               zIndex: 100
             }}>
-              <div style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>🗺️ {activeScene.name}</div>
+              <div style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>🗺️ {activeScene?.name || 'Cena Ativa'}</div>
               <div style={{ fontSize: '0.7rem', color: 'rgba(212, 175, 55, 0.7)' }}>
                 📐 {activeScene.width || 1920}×{activeScene.height || 1080} • 🔲 {activeScene.gridSize || 50}px
               </div>
@@ -1473,7 +1473,7 @@ const GameTable: React.FC = () => {
                     fontWeight: 'bold',
                     marginBottom: '0.25rem'
                   }}>
-                    {player.role === 'master' ? '👑' : '🎭'} {player.name}
+                    {player.role === 'master' ? '👑' : '🎭'} {player?.name || 'Jogador'}
                     {player.id === user.id && (
                       <span style={{ 
                         color: 'rgba(212, 175, 55, 0.6)',

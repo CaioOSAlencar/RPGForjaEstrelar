@@ -3,6 +3,8 @@ import {
   createNewCampaign, 
   listUserCampaigns,
   getCampaignById,
+  updateCampaign,
+  deleteCampaign,
   invitePlayerByEmail,
   getShareableLink,
   acceptInvite,
@@ -22,6 +24,12 @@ router.get('/', authenticateToken, listUserCampaigns);
 
 // Buscar campanha por ID (rota protegida)
 router.get('/:id', authenticateToken, getCampaignById);
+
+// Atualizar campanha (rota protegida)
+router.put('/:id', authenticateToken, updateCampaign);
+
+// Deletar campanha (rota protegida)
+router.delete('/:id', authenticateToken, deleteCampaign);
 
 // RF08 - Convidar jogador por email (rota protegida)
 router.post('/:campaignId/invite', authenticateToken, invitePlayerByEmail);

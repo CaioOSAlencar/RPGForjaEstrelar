@@ -34,15 +34,15 @@
 
 **📋 CHECKLIST DE TESTES - AUTENTICAÇÃO:**
 - [x] Acessar página de login
-- [xt] Fazer login com credenciais válidas
-- [ ] Tentar login com credenciais inválidas (deve dar erro)
-- [ ] Acessar página de cadastro
-- [ ] Criar nova conta
-- [ ] Verificar se é redirecionado para dashboard após login
-- [ ] Fazer logout
-- [ ] Tentar acessar página protegida sem login (deve redirecionar)
-- [ ] Verificar se header RPG aparece corretamente
-- [ ] Navegar entre páginas usando o menu
+- [x] Fazer login com credenciais válidas
+- [x] Tentar login com credenciais inválidas (deve dar erro)
+- [x] Acessar página de cadastro
+- [x] Criar nova conta
+- [x] Verificar se é redirecionado para dashboard após login
+- [x] Fazer logout
+- [x] Tentar acessar página protegida sem login (deve redirecionar)
+- [x] Verificar se header RPG aparece corretamente
+- [x] Navegar entre páginas usando o menu
 
 ---
 
@@ -72,17 +72,17 @@
 - ✅ Componentes reutilizáveis
 
 **📋 CHECKLIST DE TESTES - CAMPANHAS:**
-- [ ] Acessar lista de campanhas
-- [ ] Criar nova campanha
-- [ ] Editar campanha existente
-- [ ] Deletar campanha
+- [x] Acessar lista de campanhas
+- [x] Criar nova campanha
+- [x] Editar campanha existente
+- [x] Deletar campanha
 - [ ] Convidar jogador por email
 - [ ] Gerar link de convite
 - [ ] Aceitar convite (com outro usuário)
-- [ ] Entrar na campanha por código
+- [x] Entrar na campanha por código
 - [ ] Gerenciar jogadores (remover/alterar permissões)
-- [ ] Verificar se apenas o mestre pode editar
-- [ ] Testar validações de formulário
+- [x] Verificar se apenas o mestre pode editar
+- [x] Testar validações de formulário
 
 ---
 
