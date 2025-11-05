@@ -22,7 +22,7 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-  console.log('Fazendo requisição para:', config.url, 'com dados:', config.data);
+  console.log('Fazendo requisição para:', config.url, config.method?.toUpperCase(), config.data ? 'com dados:' : '', config.data || '');
   return config;
 });
 

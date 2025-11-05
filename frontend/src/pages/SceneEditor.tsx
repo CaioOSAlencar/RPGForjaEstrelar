@@ -32,9 +32,12 @@ const SceneEditor: React.FC = () => {
   const loadScene = async () => {
     try {
       const data = await sceneService.getScene(sceneId!);
+      if (!data) {
+        throw new Error('Cena nao encontrada');
+      }
       setScene(data);
       setFormData({
-        name: data.name,
+        name: data.name || '',
         description: data.description || '',
         gridSize: data.gridSize || 50,
         gridColor: data.gridColor || '#ffffff',
@@ -42,8 +45,9 @@ const SceneEditor: React.FC = () => {
         width: data.width || 1920,
         height: data.height || 1080
       });
-    } catch (error) {
-      toast.error('Erro ao carregar cena');
+    } catch (error: any) {
+      console.error('Erro ao carregar cena:', error);
+      toast.error(error?.response?.data?.message || 'Erro ao carregar cena');
       navigate(-1);
     } finally {
       setLoading(false);
@@ -59,15 +63,29 @@ const SceneEditor: React.FC = () => {
         description: formData.description || '',
         gridSize: formData.gridSize || 50,
         gridColor: formData.gridColor || '#ffffff',
-        gridOpacity: formData.gridOpacity || 0.3,
+        gridOpacity: formData.gridOpacity,
         width: formData.width || 1920,
         height: formData.height || 1080
       };
       
+      console.log('Salvando dados:', dataToSave);
       const updatedScene = await sceneService.updateScene(sceneId!, dataToSave);
+      console.log('Cena atualizada:', updatedScene);
+      console.log('GridOpacity retornado:', updatedScene.gridOpacity);
       setScene(updatedScene);
+      // Atualizar formData com os dados retornados do backend
+      setFormData({
+        name: updatedScene.name || '',
+        description: updatedScene.description || '',
+        gridSize: updatedScene.gridSize || 50,
+        gridColor: updatedScene.gridColor || '#ffffff',
+        gridOpacity: updatedScene.gridOpacity !== undefined ? updatedScene.gridOpacity : dataToSave.gridOpacity,
+        width: updatedScene.width || 1920,
+        height: updatedScene.height || 1080
+      });
       toast.success('Cena salva com sucesso');
     } catch (error) {
+      console.error('Erro ao salvar:', error);
       toast.error('Erro ao salvar cena');
     } finally {
       setSaving(false);

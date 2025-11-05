@@ -106,15 +106,15 @@
 - ✅ Controles de navegação
 
 **📋 CHECKLIST DE TESTES - MAPAS E CENAS:**
-- [ ] Acessar gerenciamento de cenas
-- [ ] Criar nova cena
-- [ ] Fazer upload de imagem de fundo
-- [ ] Configurar tamanho do grid
-- [ ] Alterar cor do grid
-- [ ] Ativar/desativar snap to grid
-- [ ] Editar cena existente
-- [ ] Deletar cena
-- [ ] Navegar para mesa de jogo
+- [x] Acessar gerenciamento de cenas
+- [a] Criar nova cena
+- [x] Fazer upload de imagem de fundo
+- [x] Configurar tamanho do grid
+- [x] Alterar cor do grid
+- [x] Ativar/desativar snap to grid
+- [x] Editar cena existente
+- [x] Deletar cena
+- [x] Navegar para mesa de jogo
 - [ ] Testar zoom in/out no mapa
 - [ ] Testar pan (arrastar mapa)
 - [ ] Alternar entre cenas na mesa

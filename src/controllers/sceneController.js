@@ -6,7 +6,7 @@ import {
   updateScene,
   deleteScene
 } from '../repositories/sceneRepository.js';
-import { findCampaignById } from '../repositories/campaignRepository.js';
+import { findCampaignById, checkUserInCampaign } from '../repositories/campaignRepository.js';
 import { sendResponse, sendError } from '../utils/messages.js';
 import asyncHandler from 'express-async-handler';
 
@@ -62,9 +62,9 @@ export const listCampaignScenes = asyncHandler(async (req, res) => {
     return sendError(res, 404, 'Campanha não encontrada');
   }
 
-  // TODO: Verificar se usuário participa da campanha (mestre ou jogador)
-  // Por enquanto, apenas mestre pode ver cenas
-  if (campaign.masterId !== userId) {
+  // Verificar se usuário participa da campanha (mestre ou jogador)
+  const userInCampaign = await checkUserInCampaign(parseInt(campaignId), userId);
+  if (campaign.masterId !== userId && !userInCampaign) {
     return sendError(res, 403, 'Apenas participantes da campanha podem ver as cenas');
   }
 
@@ -90,9 +90,10 @@ export const getSceneDetails = asyncHandler(async (req, res) => {
     return sendError(res, 404, 'Cena não encontrada');
   }
 
-  // Verificar se usuário pode acessar (mestre da campanha)
-  if (scene.campaign.masterId !== userId) {
-    return sendError(res, 403, 'Apenas o mestre pode acessar os detalhes da cena');
+  // Verificar se usuário pode acessar (mestre ou jogador da campanha)
+  const userInCampaign = await checkUserInCampaign(scene.campaignId, userId);
+  if (scene.campaign.masterId !== userId && !userInCampaign) {
+    return sendError(res, 403, 'Apenas participantes da campanha podem acessar os detalhes da cena');
   }
 
   return sendResponse(res, 200, { data: scene, message: 'Detalhes da cena obtidos com sucesso' });

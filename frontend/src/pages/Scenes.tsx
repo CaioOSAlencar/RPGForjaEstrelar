@@ -298,7 +298,7 @@ const Scenes: React.FC = () => {
 
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                   <button
-                    onClick={() => navigate(`/scenes/${scene.id}`)}
+                    onClick={() => navigate(`/campaigns/${campaignId}/play`)}
                     style={{
                       flex: 1,
                       background: 'linear-gradient(135deg, #4a90e2 0%, #357abd 100%)',
@@ -320,7 +320,7 @@ const Scenes: React.FC = () => {
                       e.currentTarget.style.boxShadow = 'none';
                     }}
                   >
-                    🎮 Abrir
+                    🎮 Jogar
                   </button>
                   <button
                     onClick={() => navigate(`/scenes/${scene.id}/edit`)}
@@ -527,7 +527,7 @@ const CreateSceneModal: React.FC<CreateSceneModalProps> = ({ campaignId, onClose
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <div>
+            <div key="width-field">
               <label style={{
                 display: 'block',
                 fontSize: '0.9rem',
@@ -550,7 +550,7 @@ const CreateSceneModal: React.FC<CreateSceneModalProps> = ({ campaignId, onClose
                 }}
               />
             </div>
-            <div>
+            <div key="height-field">
               <label style={{
                 display: 'block',
                 fontSize: '0.9rem',
@@ -601,6 +601,7 @@ const CreateSceneModal: React.FC<CreateSceneModalProps> = ({ campaignId, onClose
 
           <div style={{ display: 'flex', gap: '1rem', paddingTop: '1rem' }}>
             <button
+              key="cancel-button"
               type="button"
               onClick={onClose}
               style={{
@@ -627,6 +628,7 @@ const CreateSceneModal: React.FC<CreateSceneModalProps> = ({ campaignId, onClose
               ❌ Cancelar
             </button>
             <button
+              key="submit-button"
               type="submit"
               disabled={loading}
               style={{

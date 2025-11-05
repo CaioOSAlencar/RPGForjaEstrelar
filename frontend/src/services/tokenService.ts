@@ -57,7 +57,8 @@ export const tokenService = {
 
   async getMapTokens(sceneId: string): Promise<MapToken[]> {
     const response = await api.get(`/scenes/${sceneId}/tokens`);
-    return response.data;
+    const tokens = response.data?.data || response.data || [];
+    return Array.isArray(tokens) ? tokens : [];
   },
 
   async addTokenToMap(sceneId: string, tokenId: string, x: number, y: number): Promise<MapToken> {

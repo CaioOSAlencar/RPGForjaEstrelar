@@ -34,7 +34,11 @@ export const sceneService = {
 
   async getScene(sceneId: string): Promise<Scene> {
     const response = await api.get(`/scenes/${sceneId}`);
-    return response.data.data || response.data;
+    const scene = response.data.data || response.data;
+    if (!scene || !scene.id) {
+      throw new Error('Cena nao encontrada');
+    }
+    return scene;
   },
 
   async createScene(data: CreateSceneData): Promise<Scene> {
@@ -44,7 +48,7 @@ export const sceneService = {
 
   async updateScene(sceneId: string, data: Partial<CreateSceneData>): Promise<Scene> {
     const response = await api.put(`/scenes/${sceneId}`, data);
-    return response.data;
+    return response.data.data || response.data;
   },
 
   async deleteScene(sceneId: string): Promise<void> {

@@ -8,6 +8,7 @@ import {
   findTokensByUser
 } from '../repositories/tokenRepository.js';
 import { findSceneById } from '../repositories/sceneRepository.js';
+import { checkUserInCampaign } from '../repositories/campaignRepository.js';
 import { sendResponse, sendError } from '../utils/messages.js';
 import socketManager from '../utils/socketManager.js';
 import { validateConditions, processConditionsForDisplay, getAllConditions } from '../utils/conditionsManager.js';
@@ -16,7 +17,7 @@ import asyncHandler from 'express-async-handler';
 // RF13 - Criar token com upload de imagem
 export const createNewToken = asyncHandler(async (req, res) => {
   const { name, sceneId, size, hp, maxHp } = req.body;
-  const userId = req.user.id;
+  const userId = req.user.userId;
 
   // Validações
   const validation = validateCreateToken({ name, sceneId, size, hp, maxHp });
@@ -63,7 +64,7 @@ export const createNewToken = asyncHandler(async (req, res) => {
 // Listar tokens de uma cena
 export const listSceneTokens = asyncHandler(async (req, res) => {
   const { sceneId } = req.params;
-  const userId = req.user.id;
+  const userId = req.user.userId;
 
   // Verificar se cena existe
   const scene = await findSceneById(parseInt(sceneId));
@@ -71,9 +72,9 @@ export const listSceneTokens = asyncHandler(async (req, res) => {
     return sendError(res, 404, 'Cena não encontrada');
   }
 
-  // TODO: Verificar se usuário participa da campanha
-  // Por enquanto, apenas mestre pode ver todos os tokens
-  if (scene.campaign.masterId !== userId) {
+  // Verificar se usuário participa da campanha (mestre ou jogador)
+  const userInCampaign = await checkUserInCampaign(scene.campaignId, userId);
+  if (scene.campaign.masterId !== userId && !userInCampaign) {
     return sendError(res, 403, 'Apenas participantes da campanha podem ver os tokens');
   }
 
@@ -86,7 +87,7 @@ export const listSceneTokens = asyncHandler(async (req, res) => {
 // Obter detalhes de um token
 export const getTokenDetails = asyncHandler(async (req, res) => {
   const { tokenId } = req.params;
-  const userId = req.user.id;
+  const userId = req.user.userId;
 
   // Buscar token
   const token = await findTokenById(parseInt(tokenId));
@@ -106,7 +107,7 @@ export const getTokenDetails = asyncHandler(async (req, res) => {
 export const updateTokenProperties = asyncHandler(async (req, res) => {
   const { tokenId } = req.params;
   const { name, x, y, size, rotation, hp, maxHp, conditions, isVisible } = req.body;
-  const userId = req.user.id;
+  const userId = req.user.userId;
 
   // Validações
   const validation = validateUpdateToken({ name, x, y, size, rotation, hp, maxHp, conditions, isVisible });
@@ -147,7 +148,7 @@ export const updateTokenProperties = asyncHandler(async (req, res) => {
 // RF45 - Deletar token
 export const deleteTokenById = asyncHandler(async (req, res) => {
   const { tokenId } = req.params;
-  const userId = req.user.id;
+  const userId = req.user.userId;
 
   // Buscar token
   const token = await findTokenById(parseInt(tokenId));
@@ -168,7 +169,7 @@ export const deleteTokenById = asyncHandler(async (req, res) => {
 
 // Listar tokens do usuário
 export const listUserTokens = asyncHandler(async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user.userId;
 
   // Buscar tokens do usuário
   const tokens = await findTokensByUser(userId);
@@ -180,7 +181,7 @@ export const listUserTokens = asyncHandler(async (req, res) => {
 export const linkTokenToSheet = asyncHandler(async (req, res) => {
   const { tokenId } = req.params;
   const { characterSheetId } = req.body;
-  const userId = req.user.id;
+  const userId = req.user.userId;
 
   const token = await findTokenById(parseInt(tokenId));
   if (!token) {
@@ -207,7 +208,7 @@ export const linkTokenToSheet = asyncHandler(async (req, res) => {
 export const updateTokenHP = asyncHandler(async (req, res) => {
   const { tokenId } = req.params;
   const { hp, maxHp } = req.body;
-  const userId = req.user.id;
+  const userId = req.user.userId;
 
   if (hp === undefined && maxHp === undefined) {
     return sendError(res, 400, 'HP atual ou máximo deve ser fornecido');
@@ -247,7 +248,7 @@ export const updateTokenHP = asyncHandler(async (req, res) => {
 export const updateTokenConditions = asyncHandler(async (req, res) => {
   const { tokenId } = req.params;
   const { conditions } = req.body;
-  const userId = req.user.id;
+  const userId = req.user.userId;
 
   const token = await findTokenById(parseInt(tokenId));
   if (!token) {
@@ -304,7 +305,7 @@ export const getAvailableConditions = asyncHandler(async (req, res) => {
 export const addTokenToMap = asyncHandler(async (req, res) => {
   const { sceneId } = req.params;
   const { tokenId, x, y } = req.body;
-  const userId = req.user.id;
+  const userId = req.user.userId;
 
   // Verificar se cena existe
   const scene = await findSceneById(parseInt(sceneId));

@@ -6,9 +6,13 @@ export const createScene = async (sceneData) => {
     select: {
       id: true,
       name: true,
+      description: true,
       backgroundUrl: true,
       gridSize: true,
       gridColor: true,
+      gridOpacity: true,
+      width: true,
+      height: true,
       snapToGrid: true,
       campaignId: true,
       createdAt: true,
@@ -29,9 +33,13 @@ export const findScenesByCampaign = async (campaignId) => {
     select: {
       id: true,
       name: true,
+      description: true,
       backgroundUrl: true,
       gridSize: true,
       gridColor: true,
+      gridOpacity: true,
+      width: true,
+      height: true,
       snapToGrid: true,
       createdAt: true
     },
@@ -47,9 +55,13 @@ export const findSceneById = async (id) => {
     select: {
       id: true,
       name: true,
+      description: true,
       backgroundUrl: true,
       gridSize: true,
       gridColor: true,
+      gridOpacity: true,
+      width: true,
+      height: true,
       snapToGrid: true,
       fogOfWarData: true,
       campaignId: true,
@@ -77,9 +89,13 @@ export const updateScene = async (id, sceneData) => {
     select: {
       id: true,
       name: true,
+      description: true,
       backgroundUrl: true,
       gridSize: true,
       gridColor: true,
+      gridOpacity: true,
+      width: true,
+      height: true,
       snapToGrid: true,
       createdAt: true
     }
