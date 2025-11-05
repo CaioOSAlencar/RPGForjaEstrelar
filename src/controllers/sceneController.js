@@ -79,6 +79,11 @@ export const getSceneDetails = asyncHandler(async (req, res) => {
   const { sceneId } = req.params;
   const userId = req.user.userId;
 
+  // Validar ID da cena
+  if (!sceneId || sceneId === 'undefined' || sceneId === 'null' || sceneId === 'NaN' || isNaN(parseInt(sceneId))) {
+    return sendError(res, 400, `ID da cena inválido: ${sceneId}`);
+  }
+
   // Buscar cena
   const scene = await findSceneById(parseInt(sceneId));
   if (!scene) {
@@ -98,6 +103,11 @@ export const updateSceneSettings = asyncHandler(async (req, res) => {
   const { sceneId } = req.params;
   const { name, gridSize, gridColor, snapToGrid, description, gridOpacity, width, height } = req.body;
   const userId = req.user.userId;
+
+  // Validar ID da cena
+  if (!sceneId || sceneId === 'undefined' || sceneId === 'null' || sceneId === 'NaN' || isNaN(parseInt(sceneId))) {
+    return sendError(res, 400, `ID da cena inválido: ${sceneId}`);
+  }
 
   // Buscar cena
   const scene = await findSceneById(parseInt(sceneId));
@@ -137,6 +147,11 @@ export const updateSceneSettings = asyncHandler(async (req, res) => {
 export const deleteSceneById = asyncHandler(async (req, res) => {
   const { sceneId } = req.params;
   const userId = req.user.userId;
+
+  // Validar ID da cena
+  if (!sceneId || sceneId === 'undefined' || sceneId === 'null' || sceneId === 'NaN' || isNaN(parseInt(sceneId))) {
+    return sendError(res, 400, `ID da cena inválido: ${sceneId}`);
+  }
 
   // Buscar cena
   const scene = await findSceneById(parseInt(sceneId));

@@ -193,8 +193,17 @@ export const markInviteAsUsed = async (inviteId) => {
 };
 
 export const addUserToCampaign = async (campaignId, userId) => {
-  return await prisma.campaignUser.create({
-    data: {
+  return await prisma.campaignUser.upsert({
+    where: {
+      campaignId_userId: {
+        campaignId,
+        userId
+      }
+    },
+    update: {
+      role: 'player'
+    },
+    create: {
       campaignId,
       userId,
       role: 'player'

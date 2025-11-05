@@ -18,12 +18,20 @@ const EditCampaign: React.FC = () => {
   });
 
   useEffect(() => {
-    if (id) {
+    if (id && !isNaN(Number(id))) {
       loadCampaign();
+    } else if (id) {
+      setError('ID da campanha inválido');
+      setLoading(false);
     }
   }, [id]);
 
   const loadCampaign = async () => {
+    if (!id || isNaN(Number(id))) {
+      setError('ID da campanha inválido');
+      return;
+    }
+    
     try {
       setLoading(true);
       const campaignData = await campaignService.getById(Number(id));
@@ -46,6 +54,12 @@ const EditCampaign: React.FC = () => {
     setSaving(true);
     setError('');
 
+    if (!id || isNaN(Number(id))) {
+      setError('ID da campanha inválido');
+      setSaving(false);
+      return;
+    }
+    
     try {
       await campaignService.update(Number(id), formData);
       navigate(`/campaigns/${id}`);

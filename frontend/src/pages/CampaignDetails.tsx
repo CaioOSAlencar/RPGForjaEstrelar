@@ -29,12 +29,20 @@ const CampaignDetails: React.FC = () => {
   const user = getUserFromStorage();
 
   useEffect(() => {
-    if (id) {
+    if (id && !isNaN(Number(id))) {
       loadCampaignDetails();
+    } else if (id) {
+      setError('ID da campanha inválido');
+      setLoading(false);
     }
   }, [id]);
 
   const loadCampaignDetails = async () => {
+    if (!id || isNaN(Number(id))) {
+      setError('ID da campanha inválido');
+      return;
+    }
+    
     try {
       setLoading(true);
       const [campaignData, playersData] = await Promise.all([

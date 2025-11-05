@@ -76,11 +76,10 @@
 - [x] Criar nova campanha
 - [x] Editar campanha existente
 - [x] Deletar campanha
-- [ ] Convidar jogador por email
-- [ ] Gerar link de convite
-- [ ] Aceitar convite (com outro usuário)
+- [x] Gerar link de convite
+- [x] Aceitar convite (com outro usuário)
 - [x] Entrar na campanha por código
-- [ ] Gerenciar jogadores (remover/alterar permissões)
+- [x] Gerenciar jogadores (remover/alterar permissões)
 - [x] Verificar se apenas o mestre pode editar
 - [x] Testar validações de formulário
 

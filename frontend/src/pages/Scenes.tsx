@@ -13,12 +13,19 @@ const Scenes: React.FC = () => {
   useEffect(() => {
     if (campaignId) {
       loadScenes();
+    } else {
+      setLoading(false);
     }
   }, [campaignId]);
 
   const loadScenes = async () => {
+    if (!campaignId) {
+      setScenes([]);
+      return;
+    }
+    
     try {
-      const data = await sceneService.getScenes(campaignId!);
+      const data = await sceneService.getScenes(campaignId);
       setScenes(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Erro ao carregar cenas:', error);

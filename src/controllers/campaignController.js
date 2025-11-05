@@ -18,6 +18,7 @@ import { ResponseHelper } from '../utils/responseHelper.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
 import { generateInviteToken, generateRoomCode } from '../utils/generateToken.js';
+import { generateInviteUrl, generateJoinUrl } from '../utils/urlHelper.js';
 import emailService from '../services/emailService.js';
 
 export const createNewCampaign = asyncHandler(async (req, res) => {
@@ -53,8 +54,13 @@ export const listUserCampaigns = asyncHandler(async (req, res) => {
 // RF08 - Convidar jogador por email
 export const invitePlayerByEmail = asyncHandler(async (req, res) => {
   const { email } = req.body;
-  const { campaignId } = req.params;
+  const { id } = req.params;
   const userId = req.user.userId;
+
+  // Validar ID da campanha
+  if (!id || id === 'undefined' || id === 'null' || id === 'NaN' || isNaN(parseInt(id))) {
+    throw ApiError.badRequest(`ID da campanha inválido: ${id}`);
+  }
 
   // Validações
   const validation = validateInviteByEmail({ email });
@@ -63,7 +69,7 @@ export const invitePlayerByEmail = asyncHandler(async (req, res) => {
   }
 
   // Verificar se campanha existe e se usuário é o mestre
-  const campaign = await findCampaignById(parseInt(campaignId));
+  const campaign = await findCampaignById(parseInt(id));
   if (!campaign) {
     throw ApiError.notFound('Campanha não encontrada');
   }
@@ -80,7 +86,7 @@ export const invitePlayerByEmail = asyncHandler(async (req, res) => {
     expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 dias
   });
 
-  const inviteLink = `${process.env.FRONTEND_URL || 'http://localhost:3100'}/invite/${invite.token}`;
+  const inviteLink = generateInviteUrl(invite.token);
 
   // Enviar email de convite
   try {
@@ -106,11 +112,16 @@ export const invitePlayerByEmail = asyncHandler(async (req, res) => {
 
 // RF08 - Gerar link compartilhável
 export const getShareableLink = asyncHandler(async (req, res) => {
-  const { campaignId } = req.params;
+  const { id } = req.params;
   const userId = req.user.userId;
 
+  // Validar ID da campanha
+  if (!id || id === 'undefined' || id === 'null' || id === 'NaN' || isNaN(parseInt(id))) {
+    throw ApiError.badRequest(`ID da campanha inválido: ${id}`);
+  }
+
   // Verificar se campanha existe e se usuário é o mestre
-  const campaign = await findCampaignById(parseInt(campaignId));
+  const campaign = await findCampaignById(parseInt(id));
   if (!campaign) {
     throw ApiError.notFound('Campanha não encontrada');
   }
@@ -120,7 +131,7 @@ export const getShareableLink = asyncHandler(async (req, res) => {
   }
 
   return ResponseHelper.success(res, {
-    shareLink: `${process.env.FRONTEND_URL || 'http://localhost:3100'}/join/${campaign.roomCode}`,
+    shareLink: generateJoinUrl(campaign.roomCode),
     roomCode: campaign.roomCode,
     campaignName: campaign.name
   }, 'Link compartilhável gerado com sucesso');
@@ -197,11 +208,19 @@ export const joinByRoomCode = asyncHandler(async (req, res) => {
 
 // RF43 - Remover jogador da campanha
 export const removePlayer = asyncHandler(async (req, res) => {
-  const { campaignId, playerId } = req.params;
+  const { id, playerId } = req.params;
   const userId = req.user.userId;
 
+  // Validar IDs
+  if (!id || id === 'undefined' || id === 'null' || id === 'NaN' || isNaN(parseInt(id))) {
+    throw ApiError.badRequest(`ID da campanha inválido: ${id}`);
+  }
+  if (!playerId || playerId === 'undefined' || playerId === 'null' || playerId === 'NaN' || isNaN(parseInt(playerId))) {
+    throw ApiError.badRequest(`ID do jogador inválido: ${playerId}`);
+  }
+
   // Verificar se campanha existe e se usuário é o mestre
-  const campaign = await findCampaignById(parseInt(campaignId));
+  const campaign = await findCampaignById(parseInt(id));
   if (!campaign) {
     throw ApiError.notFound('Campanha não encontrada');
   }
@@ -211,7 +230,7 @@ export const removePlayer = asyncHandler(async (req, res) => {
   }
 
   // Verificar se o jogador está na campanha
-  const playerInCampaign = await checkUserInCampaign(parseInt(campaignId), parseInt(playerId));
+  const playerInCampaign = await checkUserInCampaign(parseInt(id), parseInt(playerId));
   if (!playerInCampaign) {
     throw ApiError.notFound('Jogador não encontrado nesta campanha');
   }
@@ -222,7 +241,7 @@ export const removePlayer = asyncHandler(async (req, res) => {
   }
 
   // Remover jogador da campanha
-  await removeUserFromCampaign(parseInt(campaignId), parseInt(playerId));
+  await removeUserFromCampaign(parseInt(id), parseInt(playerId));
 
   return ResponseHelper.success(res, null, 'Jogador removido da campanha com sucesso');
 });
@@ -232,6 +251,11 @@ export const removePlayer = asyncHandler(async (req, res) => {
 export const getCampaignById = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const userId = req.user.userId;
+
+  // Validar ID da campanha
+  if (!id || id === 'undefined' || id === 'null' || id === 'NaN' || isNaN(parseInt(id))) {
+    throw ApiError.badRequest(`ID da campanha inválido: ${id}`);
+  }
 
   // Buscar campanha
   const campaign = await findCampaignById(parseInt(id));
@@ -252,6 +276,11 @@ export const updateCampaign = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { name, system, description } = req.body;
   const userId = req.user.userId;
+
+  // Validar ID da campanha
+  if (!id || id === 'undefined' || id === 'null' || id === 'NaN' || isNaN(parseInt(id))) {
+    throw ApiError.badRequest(`ID da campanha inválido: ${id}`);
+  }
 
   // Verificar se campanha existe e se usuário é o mestre
   const campaign = await findCampaignById(parseInt(id));
@@ -283,6 +312,11 @@ export const deleteCampaign = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const userId = req.user.userId;
 
+  // Validar ID da campanha
+  if (!id || id === 'undefined' || id === 'null' || id === 'NaN' || isNaN(parseInt(id))) {
+    throw ApiError.badRequest(`ID da campanha inválido: ${id}`);
+  }
+
   // Verificar se campanha existe e se usuário é o mestre
   const campaign = await findCampaignById(parseInt(id));
   if (!campaign) {
@@ -300,23 +334,28 @@ export const deleteCampaign = asyncHandler(async (req, res) => {
 });
 
 export const listCampaignPlayers = asyncHandler(async (req, res) => {
-  const { campaignId } = req.params;
+  const { id } = req.params;
   const userId = req.user.userId;
 
+  // Validar ID da campanha
+  if (!id || id === 'undefined' || id === 'null' || id === 'NaN' || isNaN(parseInt(id))) {
+    throw ApiError.badRequest(`ID da campanha inválido: ${id}`);
+  }
+
   // Verificar se campanha existe
-  const campaign = await findCampaignById(parseInt(campaignId));
+  const campaign = await findCampaignById(parseInt(id));
   if (!campaign) {
     throw ApiError.notFound('Campanha não encontrada');
   }
 
   // Verificar se usuário tem acesso à campanha (é mestre ou jogador)
-  const userInCampaign = await checkUserInCampaign(parseInt(campaignId), userId);
+  const userInCampaign = await checkUserInCampaign(parseInt(id), userId);
   if (campaign.masterId !== userId && !userInCampaign) {
     throw ApiError.forbidden('Você não tem acesso a esta campanha');
   }
 
   // Buscar jogadores da campanha
-  const players = await getCampaignPlayers(parseInt(campaignId));
+  const players = await getCampaignPlayers(parseInt(id));
 
   return ResponseHelper.success(res, players, 'Jogadores listados com sucesso');
 });

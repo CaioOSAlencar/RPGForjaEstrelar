@@ -104,18 +104,26 @@ const GameTable: React.FC = () => {
   }, [isConnected, scenes]);
 
   useEffect(() => {
-    if (id) {
+    if (id && !isNaN(Number(id))) {
       loadCampaignData();
+    } else if (id) {
+      setError('ID da campanha inválido');
+      setLoading(false);
     }
   }, [id]);
 
   const loadCampaignData = async () => {
+    if (!id || isNaN(Number(id))) {
+      setError('ID da campanha inválido');
+      return;
+    }
+    
     try {
       setLoading(true);
       const [campaignData, playersData, scenesData] = await Promise.all([
         campaignService.getById(Number(id)),
         campaignService.getPlayers(Number(id)),
-        sceneService.getScenes(id!)
+        sceneService.getScenes(id)
       ]);
       setCampaign(campaignData);
       setPlayers(playersData || []);
